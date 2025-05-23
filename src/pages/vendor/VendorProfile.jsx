@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 const VendorProfile = () => {
   const navigate = useNavigate();
-  const token = localStorage.getItem("jwtToken");
+  const token = localStorage.getItem("carocart_token");
   const [vendor, setVendor] = useState({
     firstName: "",
     lastName: "",

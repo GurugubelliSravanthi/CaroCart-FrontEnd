@@ -25,7 +25,7 @@ const UserLogin = () => {
       }
 
       const token = await res.text();
-      localStorage.setItem("jwtToken", token);
+      localStorage.setItem("carocart_token", token);
       alert("Login successful!");
 
       navigate("/dashboard");

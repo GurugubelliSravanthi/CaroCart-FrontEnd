@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 const UserProfile = () => {
   const navigate = useNavigate();
-  const token = localStorage.getItem("jwtToken");
+  const token = localStorage.getItem("carocart_token");
 
   const [user, setUser] = useState({
     firstName: "",
@@ -31,7 +31,7 @@ const UserProfile = () => {
       })
       .catch((err) => {
         console.error("Error fetching profile:", err);
-        localStorage.removeItem("jwtToken");
+        localStorage.removeItem("carocart_token");
         navigate("/login");
       });
   }, [token, navigate]);

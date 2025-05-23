@@ -7,7 +7,7 @@ const AdminVendorApproval = () => {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
-  const token = localStorage.getItem("jwtToken");
+  const token = localStorage.getItem("carocart_token");
 
   useEffect(() => {
     if (!token) {
