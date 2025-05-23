@@ -17,7 +17,7 @@ const AdminLogin = () => {
       if (response.data.token) {
         localStorage.setItem("carocart_token", response.data.token);
         localStorage.setItem("role", "ADMIN");
-        navigate("/admins/vendors/pending"); // redirect to admin vendor approval page
+        navigate("/admins/dashboard");
       } else {
         setError("Login failed: No token received");
       }
