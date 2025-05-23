@@ -13,7 +13,7 @@ function parseJwt(token) {
 
 const VendorDashboard = () => {
   const navigate = useNavigate();
-  const token = localStorage.getItem("vendorJwtToken");
+  const token = localStorage.getItem("carocart_token");
 
   useEffect(() => {
     if (!token) {
@@ -28,13 +28,13 @@ const VendorDashboard = () => {
     if (decoded && decoded.sub) {
       vendorEmail = decoded.sub;
     } else {
-      localStorage.removeItem("vendorJwtToken");
+      localStorage.removeItem("carocart_token");
       navigate("/vendors/login");
     }
   }
 
   const handleLogout = () => {
-    localStorage.removeItem("vendorJwtToken");
+    localStorage.removeItem("carocart_token");
     navigate("/vendors/login");
   };
 

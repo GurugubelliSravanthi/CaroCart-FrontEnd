@@ -15,7 +15,7 @@ const AdminLogin = () => {
     try {
       const response = await adminLogin({ email, password });
       if (response.data.token) {
-        localStorage.setItem("jwtToken", response.data.token);
+        localStorage.setItem("carocart_token", response.data.token);
         localStorage.setItem("role", "ADMIN");
         navigate("/admins/vendors/pending"); // redirect to admin vendor approval page
       } else {

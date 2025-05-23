@@ -35,7 +35,7 @@ const VendorLogin = () => {
       
 
       const token = await res.text();
-      localStorage.setItem("vendorJwtToken", token);
+      localStorage.setItem("carocart_token", token);
       alert("Login successful!");
       navigate("/vendors/dashboard"); // Adjust this path to your actual dashboard route
     } catch (error) {
