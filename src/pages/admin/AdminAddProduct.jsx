@@ -6,7 +6,7 @@ import {
   getSubCategoriesByCategoryId,
 } from "../../services/categoryService";
 import { getToken } from "../../utils/auth";
-import "./AdminProductForm.css"; // New CSS file
+import "./AdminProductForm.css";
 
 const AdminAddProduct = () => {
   const location = useLocation();
@@ -14,6 +14,7 @@ const AdminAddProduct = () => {
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState("");
+  const [imageFile, setImageFile] = useState(null);
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -27,7 +28,6 @@ const AdminAddProduct = () => {
     discount: "",
     stock: "",
     unit: "",
-    imageUrl: "",
     isAvailable: true,
   });
 
@@ -46,7 +46,6 @@ const AdminAddProduct = () => {
         discount: editProduct.discount || "",
         stock: editProduct.stock || "",
         unit: editProduct.unit || "",
-        imageUrl: editProduct.imageUrl || "",
         isAvailable: editProduct.isAvailable ?? true,
       });
 
@@ -87,12 +86,16 @@ const AdminAddProduct = () => {
     setForm({ ...form, [name]: type === "checkbox" ? checked : value });
   };
 
+  const handleImageChange = (e) => {
+    setImageFile(e.target.files[0]);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = getToken();
     setIsSubmitting(true);
 
-    const payload = {
+    const productPayload = {
       ...form,
       subCategory: { id: form.subCategoryId },
       price: parseFloat(form.price),
@@ -100,14 +103,19 @@ const AdminAddProduct = () => {
       discount: parseFloat(form.discount),
       stock: parseInt(form.stock),
     };
-    delete payload.subCategoryId;
+
+    const formData = new FormData();
+    formData.append("product", JSON.stringify(productPayload));
+    if (imageFile) {
+      formData.append("image", imageFile);
+    }
 
     try {
       if (editProduct) {
-        await updateProduct(editProduct.id, payload, token);
+        await updateProduct(editProduct.id, formData, token);
         setMessage("Product updated successfully!");
       } else {
-        await addProduct(payload, token);
+        await addProduct(formData, token);
         setMessage("Product added successfully!");
         setForm({
           name: "",
@@ -119,9 +127,9 @@ const AdminAddProduct = () => {
           discount: "",
           stock: "",
           unit: "",
-          imageUrl: "",
           isAvailable: true,
         });
+        setImageFile(null);
         setSelectedCategoryId("");
         setSubcategories([]);
       }
@@ -237,7 +245,6 @@ const AdminAddProduct = () => {
               name="price"
               value={form.price}
               onChange={handleChange}
-              placeholder="Selling price"
               required
               min="0"
               step="0.01"
@@ -252,7 +259,6 @@ const AdminAddProduct = () => {
               name="mrp"
               value={form.mrp}
               onChange={handleChange}
-              placeholder="Maximum retail price"
               required
               min="0"
               step="0.01"
@@ -267,7 +273,6 @@ const AdminAddProduct = () => {
               name="discount"
               value={form.discount}
               onChange={handleChange}
-              placeholder="Discount percentage"
               required
               min="0"
               max="100"
@@ -284,7 +289,6 @@ const AdminAddProduct = () => {
               name="stock"
               value={form.stock}
               onChange={handleChange}
-              placeholder="Available quantity"
               required
               min="0"
             />
@@ -305,25 +309,18 @@ const AdminAddProduct = () => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="imageUrl">Image URL</label>
+          <label htmlFor="image">Product Image</label>
           <input
-            type="url"
-            id="imageUrl"
-            name="imageUrl"
-            value={form.imageUrl}
-            onChange={handleChange}
-            placeholder="https://example.com/image.jpg"
-            required
+            type="file"
+            id="image"
+            accept="image/*"
+            onChange={handleImageChange}
           />
         </div>
 
-        {form.imageUrl && (
+        {imageFile && (
           <div className="image-preview">
-            <img
-              src={form.imageUrl}
-              alt="Product preview"
-              onError={(e) => (e.target.style.display = "none")}
-            />
+            <img src={URL.createObjectURL(imageFile)} alt="Preview" />
           </div>
         )}
 
