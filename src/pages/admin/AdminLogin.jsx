@@ -1,7 +1,7 @@
-// src/pages/AdminLogin.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { adminLogin } from "../../services/authService";
+import "./AdminLogin.css"; // Import the CSS file
 
 const AdminLogin = () => {
   const navigate = useNavigate();
@@ -29,32 +29,32 @@ const AdminLogin = () => {
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: "auto", padding: 20 }}>
-      <h2>Admin Login</h2>
-      {error && <div style={{ color: "red", marginBottom: 10 }}>{error}</div>}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Email:</label>
-          <br />
+    <div className="login-container">
+      <h2 className="login-title">Admin Login</h2>
+      {error && <div className="login-error">{error}</div>}
+      <form onSubmit={handleSubmit} className="login-form">
+        <div className="form-group">
+          <label className="form-label">Email:</label>
           <input
             type="email"
+            className="form-input"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             autoFocus
           />
         </div>
-        <div style={{ marginTop: 10 }}>
-          <label>Password:</label>
-          <br />
+        <div className="form-group">
+          <label className="form-label">Password:</label>
           <input
             type="password"
+            className="form-input"
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-        <button type="submit" style={{ marginTop: 20, padding: "8px 16px" }}>
+        <button type="submit" className="login-button">
           Login
         </button>
       </form>
