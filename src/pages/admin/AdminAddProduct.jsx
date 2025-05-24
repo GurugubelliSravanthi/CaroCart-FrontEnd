@@ -1,195 +1,350 @@
-import React, { useState } from "react";
-import { addProduct } from "../../services/productService";
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { addProduct, updateProduct } from "../../services/productService";
+import {
+  getAllCategories,
+  getSubCategoriesByCategoryId,
+} from "../../services/categoryService";
 import { getToken } from "../../utils/auth";
+import "./AdminProductForm.css"; // New CSS file
 
 const AdminAddProduct = () => {
+  const location = useLocation();
+  const editProduct = location.state?.product;
+  const [categories, setCategories] = useState([]);
+  const [subcategories, setSubcategories] = useState([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState("");
+  const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [form, setForm] = useState({
     name: "",
     description: "",
     brand: "",
-    category: "",
+    subCategoryId: "",
     price: "",
     mrp: "",
     discount: "",
     stock: "",
     unit: "",
     imageUrl: "",
-    isAvailable: true, // default true
+    isAvailable: true,
   });
 
-  const [message, setMessage] = useState("");
+  useEffect(() => {
+    fetchCategories();
+
+    if (editProduct) {
+      const subCat = editProduct.subCategory || {};
+      setForm({
+        name: editProduct.name || "",
+        description: editProduct.description || "",
+        brand: editProduct.brand || "",
+        subCategoryId: subCat.id || "",
+        price: editProduct.price || "",
+        mrp: editProduct.mrp || "",
+        discount: editProduct.discount || "",
+        stock: editProduct.stock || "",
+        unit: editProduct.unit || "",
+        imageUrl: editProduct.imageUrl || "",
+        isAvailable: editProduct.isAvailable ?? true,
+      });
+
+      if (subCat.categoryId) {
+        setSelectedCategoryId(subCat.categoryId);
+        fetchSubcategories(subCat.categoryId);
+      }
+    }
+  }, [editProduct]);
+
+  const fetchCategories = async () => {
+    try {
+      const res = await getAllCategories();
+      setCategories(res.data);
+    } catch (err) {
+      console.error("Failed to load categories", err);
+    }
+  };
+
+  const fetchSubcategories = async (categoryId) => {
+    try {
+      const res = await getSubCategoriesByCategoryId(categoryId);
+      setSubcategories(res.data);
+    } catch (err) {
+      console.error("Failed to fetch subcategories", err);
+    }
+  };
+
+  const handleCategoryChange = async (e) => {
+    const categoryId = e.target.value;
+    setSelectedCategoryId(categoryId);
+    setForm({ ...form, subCategoryId: "" });
+    fetchSubcategories(categoryId);
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-
-    setForm((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+    setForm({ ...form, [name]: type === "checkbox" ? checked : value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = getToken();
+    setIsSubmitting(true);
 
-    // Prepare payload with proper types
     const payload = {
       ...form,
+      subCategory: { id: form.subCategoryId },
       price: parseFloat(form.price),
       mrp: parseFloat(form.mrp),
       discount: parseFloat(form.discount),
       stock: parseInt(form.stock),
-      isAvailable: form.isAvailable,
     };
+    delete payload.subCategoryId;
 
     try {
-      await addProduct(payload, token);
-      setMessage("Product added successfully!");
-      setForm({
-        name: "",
-        description: "",
-        brand: "",
-        category: "",
-        price: "",
-        mrp: "",
-        discount: "",
-        stock: "",
-        unit: "",
-        imageUrl: "",
-        isAvailable: true,
-      });
+      if (editProduct) {
+        await updateProduct(editProduct.id, payload, token);
+        setMessage("Product updated successfully!");
+      } else {
+        await addProduct(payload, token);
+        setMessage("Product added successfully!");
+        setForm({
+          name: "",
+          description: "",
+          brand: "",
+          subCategoryId: "",
+          price: "",
+          mrp: "",
+          discount: "",
+          stock: "",
+          unit: "",
+          imageUrl: "",
+          isAvailable: true,
+        });
+        setSelectedCategoryId("");
+        setSubcategories([]);
+      }
     } catch (error) {
       setMessage(
-        "Failed to add product. " + (error.response?.data?.message || "")
+        "Error: " + (error.response?.data?.message || "Unknown error")
       );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div style={{ maxWidth: "600px", margin: "auto" }}>
-      <h2>Add New Product</h2>
-      {message && <p>{message}</p>}
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="name"
-          value={form.name}
-          onChange={handleChange}
-          placeholder="Product Name"
-          required
-        />
-        <br />
+    <div className="admin-product-form-container">
+      <h2 className="form-title">
+        {editProduct ? "Edit Product" : "Add New Product"}
+      </h2>
 
-        <textarea
-          name="description"
-          value={form.description}
-          onChange={handleChange}
-          placeholder="Description"
-          required
-        />
-        <br />
+      {message && (
+        <div
+          className={`form-message ${
+            message.includes("Error") ? "error" : "success"
+          }`}
+        >
+          {message}
+        </div>
+      )}
 
-        <input
-          type="text"
-          name="brand"
-          value={form.brand}
-          onChange={handleChange}
-          placeholder="Brand"
-          required
-        />
-        <br />
+      <form onSubmit={handleSubmit} className="product-form">
+        <div className="form-group">
+          <label htmlFor="name">Product Name</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            placeholder="Enter product name"
+            required
+          />
+        </div>
 
-        <input
-          type="text"
-          name="category"
-          value={form.category}
-          onChange={handleChange}
-          placeholder="Category"
-          required
-        />
-        <br />
+        <div className="form-group">
+          <label htmlFor="description">Description</label>
+          <textarea
+            id="description"
+            name="description"
+            value={form.description}
+            onChange={handleChange}
+            placeholder="Enter product description"
+            required
+            rows="4"
+          />
+        </div>
 
-        <input
-          type="number"
-          name="price"
-          value={form.price}
-          onChange={handleChange}
-          placeholder="Price"
-          required
-          min="0"
-          step="0.01"
-        />
-        <br />
+        <div className="form-group">
+          <label htmlFor="brand">Brand</label>
+          <input
+            type="text"
+            id="brand"
+            name="brand"
+            value={form.brand}
+            onChange={handleChange}
+            placeholder="Enter brand name"
+            required
+          />
+        </div>
 
-        <input
-          type="number"
-          name="mrp"
-          value={form.mrp}
-          onChange={handleChange}
-          placeholder="MRP"
-          required
-          min="0"
-          step="0.01"
-        />
-        <br />
+        <div className="form-row">
+          <div className="form-group">
+            <label htmlFor="category">Category</label>
+            <select
+              id="category"
+              value={selectedCategoryId}
+              onChange={handleCategoryChange}
+              required
+            >
+              <option value="">Select Category</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <input
-          type="number"
-          name="discount"
-          value={form.discount}
-          onChange={handleChange}
-          placeholder="Discount (%)"
-          required
-          min="0"
-          max="100"
-          step="0.01"
-        />
-        <br />
+          <div className="form-group">
+            <label htmlFor="subCategoryId">Subcategory</label>
+            <select
+              id="subCategoryId"
+              name="subCategoryId"
+              value={form.subCategoryId}
+              onChange={handleChange}
+              required
+              disabled={!selectedCategoryId}
+            >
+              <option value="">Select Subcategory</option>
+              {subcategories.map((sub) => (
+                <option key={sub.id} value={sub.id}>
+                  {sub.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
 
-        <input
-          type="number"
-          name="stock"
-          value={form.stock}
-          onChange={handleChange}
-          placeholder="Stock Quantity"
-          required
-          min="0"
-          step="1"
-        />
-        <br />
+        <div className="form-row">
+          <div className="form-group">
+            <label htmlFor="price">Price (₹)</label>
+            <input
+              type="number"
+              id="price"
+              name="price"
+              value={form.price}
+              onChange={handleChange}
+              placeholder="Selling price"
+              required
+              min="0"
+              step="0.01"
+            />
+          </div>
 
-        <input
-          type="text"
-          name="unit"
-          value={form.unit}
-          onChange={handleChange}
-          placeholder="Unit (e.g. kg, pcs)"
-          required
-        />
-        <br />
+          <div className="form-group">
+            <label htmlFor="mrp">MRP (₹)</label>
+            <input
+              type="number"
+              id="mrp"
+              name="mrp"
+              value={form.mrp}
+              onChange={handleChange}
+              placeholder="Maximum retail price"
+              required
+              min="0"
+              step="0.01"
+            />
+          </div>
 
-        <input
-          type="url"
-          name="imageUrl"
-          value={form.imageUrl}
-          onChange={handleChange}
-          placeholder="Image URL"
-          required
-        />
-        <br />
+          <div className="form-group">
+            <label htmlFor="discount">Discount (%)</label>
+            <input
+              type="number"
+              id="discount"
+              name="discount"
+              value={form.discount}
+              onChange={handleChange}
+              placeholder="Discount percentage"
+              required
+              min="0"
+              max="100"
+            />
+          </div>
+        </div>
 
-        <label>
+        <div className="form-row">
+          <div className="form-group">
+            <label htmlFor="stock">Stock</label>
+            <input
+              type="number"
+              id="stock"
+              name="stock"
+              value={form.stock}
+              onChange={handleChange}
+              placeholder="Available quantity"
+              required
+              min="0"
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="unit">Unit</label>
+            <input
+              type="text"
+              id="unit"
+              name="unit"
+              value={form.unit}
+              onChange={handleChange}
+              placeholder="e.g. kg, g, ml, pieces"
+              required
+            />
+          </div>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="imageUrl">Image URL</label>
+          <input
+            type="url"
+            id="imageUrl"
+            name="imageUrl"
+            value={form.imageUrl}
+            onChange={handleChange}
+            placeholder="https://example.com/image.jpg"
+            required
+          />
+        </div>
+
+        {form.imageUrl && (
+          <div className="image-preview">
+            <img
+              src={form.imageUrl}
+              alt="Product preview"
+              onError={(e) => (e.target.style.display = "none")}
+            />
+          </div>
+        )}
+
+        <div className="form-group checkbox-group">
           <input
             type="checkbox"
+            id="isAvailable"
             name="isAvailable"
             checked={form.isAvailable}
             onChange={handleChange}
           />
-          Available
-        </label>
-        <br />
+          <label htmlFor="isAvailable">Product is available</label>
+        </div>
 
-        <button type="submit">Add Product</button>
+        <button type="submit" className="submit-btn" disabled={isSubmitting}>
+          {isSubmitting
+            ? "Processing..."
+            : editProduct
+            ? "Update Product"
+            : "Add Product"}
+        </button>
       </form>
     </div>
   );

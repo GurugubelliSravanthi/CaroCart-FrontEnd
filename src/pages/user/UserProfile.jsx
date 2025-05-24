@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import "./UserProfile.css";
 
 const UserProfile = () => {
   const navigate = useNavigate();
@@ -51,58 +52,59 @@ const UserProfile = () => {
       setMessage("✅ Profile updated successfully");
     } catch (err) {
       console.error("Update error:", err);
-      setMessage("❌ Update failed. Try again.");
+      setMessage("❌ Update failed. Please try again.");
     }
   };
 
-  if (loading) return <div>Loading profile...</div>;
+  if (loading) return <div className="loading-text">Loading profile...</div>;
 
   return (
-    <div style={{ maxWidth: 400, margin: "auto", padding: 20 }}>
-      <h2>User Profile</h2>
+    <div className="user-profile-container">
+      <h2 className="user-profile-title">User Profile</h2>
       {message && (
-        <p style={{ color: message.startsWith("✅") ? "green" : "red" }}>
+        <p
+          className={`user-profile-message ${
+            message.startsWith("✅") ? "success" : "error"
+          }`}
+        >
           {message}
         </p>
       )}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>First Name:</label>
+      <form onSubmit={handleSubmit} className="user-profile-form">
+        <div className="form-group">
+          <label className="form-label">First Name:</label>
           <input
             type="text"
             name="firstName"
             value={user.firstName}
             onChange={handleChange}
             required
-            style={{ width: "100%", marginBottom: 10 }}
+            className="form-input"
           />
         </div>
-        <div>
-          <label>Last Name:</label>
+        <div className="form-group">
+          <label className="form-label">Last Name:</label>
           <input
             type="text"
             name="lastName"
             value={user.lastName}
             onChange={handleChange}
             required
-            style={{ width: "100%", marginBottom: 10 }}
+            className="form-input"
           />
         </div>
-        <div>
-          <label>Email (read-only):</label>
+        <div className="form-group">
+          <label className="form-label">Email:</label>
           <input
             type="email"
             name="email"
             value={user.email}
             readOnly
-            style={{
-              width: "100%",
-              backgroundColor: "#f0f0f0",
-              marginBottom: 10,
-            }}
+            className="form-input"
+            style={{ backgroundColor: "#f8fafc", color: "#64748b" }}
           />
         </div>
-        <button type="submit" style={{ padding: "8px 16px" }}>
+        <button type="submit" className="submit-button">
           Update Profile
         </button>
       </form>

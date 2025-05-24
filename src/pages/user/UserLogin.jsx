@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import "./UserLogin.css";
 
 const UserLogin = () => {
   const [email, setEmail] = useState("");
@@ -27,7 +28,6 @@ const UserLogin = () => {
       const token = await res.text();
       localStorage.setItem("carocart_token", token);
       alert("Login successful!");
-
       navigate("/dashboard");
     } catch (error) {
       alert("An error occurred: " + error.message);
@@ -35,35 +35,48 @@ const UserLogin = () => {
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: "auto", paddingTop: 40 }}>
-      <h2>User Login</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Email:</label>
-          <br />
+    <div className="login-container">
+      <div className="login-header">
+        <h2 className="login-title">Welcome Back</h2>
+        <p className="login-subtitle">Please enter your credentials to login</p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="login-form">
+        <div className="form-group">
+          <label className="form-label">Email Address</label>
           <input
             type="email"
+            className="form-input"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            style={{ width: "100%", padding: 8, marginBottom: 12 }}
+            placeholder="Enter your email"
           />
         </div>
-        <div>
-          <label>Password:</label>
-          <br />
+
+        <div className="form-group">
+          <label className="form-label">Password</label>
           <input
             type="password"
+            className="form-input"
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            style={{ width: "100%", padding: 8, marginBottom: 12 }}
+            placeholder="Enter your password"
           />
         </div>
-        <button type="submit" style={{ padding: "8px 16px" }}>
-          Login
+
+        <button type="submit" className="login-button">
+          Sign In
         </button>
       </form>
+
+      <div className="login-footer">
+        Don't have an account?{" "}
+        <Link to="/signup" className="login-link">
+          Register here
+        </Link>
+      </div>
     </div>
   );
 };

@@ -33,8 +33,7 @@ const AdminProductManagement = () => {
       setProducts(res.data);
       setError(null);
     } catch (err) {
-      console.error("Failed to fetch products:", err);
-      setError("Failed to load products. Please try again.");
+      setError("Failed to load products.");
     } finally {
       setLoading(false);
     }
@@ -49,8 +48,7 @@ const AdminProductManagement = () => {
       });
       fetchProducts();
     } catch (err) {
-      console.error("Failed to delete product:", err);
-      setError("Failed to delete product. Please try again.");
+      setError("Delete failed.");
     }
   };
 
@@ -59,21 +57,14 @@ const AdminProductManagement = () => {
   };
 
   return (
-    <Container fluid className="product-management">
+    <Container fluid>
       <Row className="mb-4">
         <Col>
-          <h2 className="page-title">Product Management</h2>
-          <p className="page-subtitle">
-            View and manage all products in your inventory
-          </p>
+          <h2>Product Management</h2>
         </Col>
         <Col className="text-end">
-          <Button
-            variant="primary"
-            onClick={() => navigate("/admins/products/add")}
-            className="add-product-btn"
-          >
-            + Add New Product
+          <Button onClick={() => navigate("/admins/products/add")}>
+            + Add Product
           </Button>
         </Col>
       </Row>
@@ -82,67 +73,47 @@ const AdminProductManagement = () => {
 
       {loading ? (
         <div className="text-center py-5">
-          <Spinner animation="border" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </Spinner>
-          <p className="mt-2">Loading products...</p>
+          <Spinner animation="border" />
+          <p>Loading...</p>
         </div>
-      ) : products.length === 0 ? (
-        <Card className="no-products-card">
-          <Card.Body className="text-center py-5">
-            <h5>No products found</h5>
-            <p className="text-muted">Start by adding your first product</p>
-            <Button
-              variant="primary"
-              onClick={() => navigate("/admins/products/add")}
-            >
-              Add Product
-            </Button>
-          </Card.Body>
-        </Card>
       ) : (
-        <Card className="products-table-card">
+        <Card>
           <Card.Body>
-            <div className="table-responsive">
-              <Table hover className="products-table">
-                <thead>
-                  <tr>
-                    <th>Product</th>
-                    <th>Description</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
-                    <th>Actions</th>
+            <Table responsive hover>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Brand</th>
+                  <th>Price</th>
+                  <th>Stock</th>
+                  <th>SubCategory</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {products.map((p) => (
+                  <tr key={p.id}>
+                    <td>{p.name}</td>
+                    <td>{p.brand}</td>
+                    <td>₹{p.price}</td>
+                    <td>{p.stock}</td>
+                    <td>{p.subCategory?.name}</td>
+                    <td>
+                      <Button size="sm" onClick={() => handleEdit(p)}>
+                        Edit
+                      </Button>{" "}
+                      <Button
+                        size="sm"
+                        variant="danger"
+                        onClick={() => handleDelete(p.id)}
+                      >
+                        Delete
+                      </Button>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {products.map((p) => (
-                    <tr key={p.id}>
-                      <td className="product-name">{p.name}</td>
-                      <td className="product-desc">{p.description}</td>
-                      <td className="product-price">₹{p.price}</td>
-                      <td className="product-qty">{p.quantity}</td>
-                      <td className="product-actions">
-                        <Button
-                          variant="outline-primary"
-                          size="sm"
-                          onClick={() => handleEdit(p)}
-                          className="me-2"
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          variant="outline-danger"
-                          size="sm"
-                          onClick={() => handleDelete(p.id)}
-                        >
-                          Delete
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-            </div>
+                ))}
+              </tbody>
+            </Table>
           </Card.Body>
         </Card>
       )}

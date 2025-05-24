@@ -1,75 +1,133 @@
-/* Admin Dashboard Styles - Zepto-inspired Design */
+/* AdminDashboard.css - Professional Dashboard Styles */
 
 .admin-dashboard {
-    padding: 2rem;
-    min-height: 100vh;
-    background-color: #f8f9fa;
+  background-color: #f8fafc;
+  min-height: 100vh;
+  padding-top: 2.5rem !important;
+}
+
+.dashboard-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #1a365d;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.5px;
+}
+
+.dashboard-subtitle {
+  font-size: 1.1rem;
+  color: #4a5568;
+  margin-bottom: 1.5rem;
+  font-weight: 400;
+}
+
+.dashboard-divider {
+  height: 4px;
+  width: 80px;
+  background: linear-gradient(90deg, #4299e1 0%, #38b2ac 100%);
+  margin: 1.5rem 0;
+  border-radius: 2px;
+}
+
+.dashboard-card {
+  border-radius: 12px !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  overflow: hidden;
+  border: 1px solid rgba(226, 232, 240, 0.7) !important;
+  background-color: white;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+}
+
+.card-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1.25rem;
+  color: #2b6cb0;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 0.75rem;
+}
+
+.card-text {
+  color: #718096;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+}
+
+.card-button {
+  border-radius: 8px !important;
+  padding: 0.625rem 1.25rem !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.5px;
+  text-transform: none !important;
+  transition: all 0.2s ease !important;
+  border: none !important;
+  width: fit-content;
+  margin: 0 auto;
+}
+
+/* Card Variant Colors */
+.card-button.btn-primary {
+  background-color: #4299e1 !important;
+}
+.card-button.btn-success {
+  background-color: #48bb78 !important;
+}
+.card-button.btn-info {
+  background-color: #4299e1 !important;
+}
+.card-button.btn-warning {
+  background-color: #ed8936 !important;
+}
+.card-button.btn-danger {
+  background-color: #f56565 !important;
+}
+.card-button.btn-dark {
+  background-color: #2d3748 !important;
+}
+
+/* Responsive Design */
+@media (max-width: 1199.98px) {
+  .dashboard-title {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .admin-dashboard {
+    padding: 1.5rem !important;
   }
   
   .dashboard-title {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #2c3e50;
-    margin-bottom: 0.5rem;
+    font-size: 1.75rem;
   }
   
   .dashboard-subtitle {
     font-size: 1rem;
-    color: #7f8c8d;
-    margin-bottom: 2rem;
-  }
-  
-  .dashboard-card {
-    border: none;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease;
-    cursor: pointer;
-    background-color: white;
-  }
-  
-  .dashboard-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
   }
   
   .card-icon {
-    font-size: 3rem;
-    margin-bottom: 1.5rem;
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .dashboard-title {
+    font-size: 1.5rem;
   }
   
-  .card-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #2c3e50;
-    margin-bottom: 1rem;
+  .dashboard-card {
+    max-width: 320px;
+    margin-left: auto;
+    margin-right: auto;
   }
-  
-  .card-text {
-    color: #7f8c8d;
-    font-size: 0.9rem;
-    margin-bottom: 1.5rem;
-  }
-  
-  .card-button {
-    border: none;
-    border-radius: 8px;
-    padding: 0.5rem 1.5rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
-  }
-  
-  /* Responsive adjustments */
-  @media (max-width: 768px) {
-    .admin-dashboard {
-      padding: 1.5rem;
-    }
-    
-    .dashboard-title {
-      font-size: 1.75rem;
-    }
-    
-    .card-icon {
-      font-size: 2.5rem;
-    }
-  }
+}
