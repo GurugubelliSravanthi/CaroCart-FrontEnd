@@ -14,8 +14,10 @@ import VendorDashboard from "./pages/vendor/VendorDashboard";
 import VendorProfile from "./pages/vendor/VendorProfile";
 
 import AdminLogin from "./pages/admin/AdminLogin"; // Admin login page
-import AdminVendorApproval from "./pages/admin/AdminDashboard"; // Admin approve vendors page
+import AdminDashboard from "./pages/admin/AdminDashboard"; // Admin approve vendors page
 import AdminProductManagement from "./pages/admin/AdminProductManagement"; // <-- new import
+import AdminVendorApproval from "./pages/admin/AdminVendorApproval"; // <-- new import
+import AdminAddProduct from "./pages/admin/AdminAddProduct"; // <-- new import
 
 import PrivateRoute from "./components/PrivateRoute";
 
@@ -81,6 +83,14 @@ function App() {
         {/* Admin routes */}
         <Route path="/admins/login" element={<AdminLogin />} />
         <Route
+          path="/admins/dashboard"
+          element={
+            <PrivateRoute role="ADMIN">
+              <AdminDashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
           path="/admins/vendors/pending"
           element={
             <PrivateRoute role="ADMIN">
@@ -93,6 +103,14 @@ function App() {
           element={
             <PrivateRoute role="ADMIN">
               <AdminProductManagement />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admins/products/add"
+          element={
+            <PrivateRoute role="ADMIN">
+              <AdminAddProduct />
             </PrivateRoute>
           }
         />
