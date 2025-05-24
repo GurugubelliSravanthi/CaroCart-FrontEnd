@@ -2,27 +2,25 @@ import axios from "axios";
 
 const PRODUCT_API_BASE = "http://localhost:8082";
 
-// Admin: Add a new product
-export const addProduct = (productData, token) => {
-  return axios.post(`${PRODUCT_API_BASE}/products/admin/add`, productData, {
+// For multipart/form-data POST/PUT
+export const addProduct = (formData, token) => {
+  return axios.post(`${PRODUCT_API_BASE}/products/admin/add`, formData, {
     headers: {
       Authorization: `Bearer ${token}`,
+      "Content-Type": "multipart/form-data",
     },
   });
 };
 
-// Admin: Update product
-export const updateProduct = (productId, updatedData, token) => {
-  return axios.put(
-    `${PRODUCT_API_BASE}/products/admin/update/${productId}`,
-    updatedData,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+export const updateProduct = (productId, formData, token) => {
+  return axios.put(`${PRODUCT_API_BASE}/products/admin/update/${productId}`, formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "multipart/form-data",
+    },
+  });
 };
+
 
 // Admin: Delete product
 export const deleteProduct = (productId, token) => {

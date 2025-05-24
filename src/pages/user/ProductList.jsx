@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "./ProductList.css"; // Import the CSS file
+import "./ProductList.css";
 
 const API_BASE = "http://localhost:8082/products";
 
@@ -41,7 +41,7 @@ const ProductList = () => {
     });
   };
 
-  // Group products by Category and then SubCategory
+  // Group products by Category and SubCategory
   const groupedByCategory = products.reduce((acc, product) => {
     const category = product.subCategory?.category || {
       id: "uncat",
@@ -107,7 +107,11 @@ const ProductList = () => {
                     <div key={p.id} className="product-card">
                       <div className="product-image-container">
                         <img
-                          src={p.imageUrl || "/placeholder-product.jpg"}
+                          src={
+                            p.image
+                              ? `${API_BASE}/image/${p.id}`
+                              : "/placeholder-product.jpg"
+                          }
                           alt={p.name}
                           className="product-image"
                           onError={(e) => {
@@ -120,8 +124,14 @@ const ProductList = () => {
                         <p className="product-description">
                           {p.description || "No description available"}
                         </p>
-                        <p className="product-price">₹{p.price.toLocaleString()}</p>
-                        <p className={`product-stock ${getStockStatusClass(p.stock)}`}>
+                        <p className="product-price">
+                          ₹{p.price.toLocaleString()}
+                        </p>
+                        <p
+                          className={`product-stock ${getStockStatusClass(
+                            p.stock
+                          )}`}
+                        >
                           {p.stock > 0 ? `${p.stock} in stock` : "Out of stock"}
                         </p>
                         <div className="quantity-controls">
@@ -138,7 +148,9 @@ const ProductList = () => {
                           <button
                             className="quantity-btn"
                             onClick={() => handleQuantityChange(p.id, 1)}
-                            disabled={p.stock <= 0 || quantities[p.id] >= p.stock}
+                            disabled={
+                              p.stock <= 0 || quantities[p.id] >= p.stock
+                            }
                           >
                             +
                           </button>
