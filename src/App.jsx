@@ -22,11 +22,16 @@ import AdminAddCategory from "./pages/admin/AdminAddCategory";
 
 
 import PrivateRoute from "./components/PrivateRoute";
+import HomePage from "./pages/home/HomePage";
+import AppNavbar from "./components/Navbar/AppNavbar";
 
 function App() {
   return (
     <Router>
+      <AppNavbar />
       <Routes>
+        {/* Public routes */}
+        <Route path="/" element={<HomePage />} />
         {/* User routes */}
         <Route path="/signup" element={<UserSignup />} />
         <Route path="/login" element={<UserLogin />} />
