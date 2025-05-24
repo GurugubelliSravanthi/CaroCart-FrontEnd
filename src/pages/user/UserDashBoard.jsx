@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "./UserDashboard.css"; 
 
-// Simple JWT decode without external lib
 function parseJwt(token) {
   try {
     return JSON.parse(atob(token.split(".")[1]));
@@ -30,11 +30,10 @@ const UserDashBoard = () => {
       return;
     }
 
-    // Use firstName and lastName from token if available
     if (decoded.firstName && decoded.lastName) {
       setUserName(`${decoded.firstName} ${decoded.lastName}`);
     } else if (decoded.sub) {
-      setUserName(decoded.sub); // fallback to email
+      setUserName(decoded.sub);
     } else {
       localStorage.removeItem("carocart_token");
       navigate("/login");
@@ -55,30 +54,34 @@ const UserDashBoard = () => {
   };
 
   return (
-    <div style={{ padding: 20 }}>
-      <h1>Welcome, {userName}!</h1>
-      <p>This is your CaroCart User Dashboard.</p>
+    <div className="dashboard-container">
+      <h1 className="dashboard-header">Welcome, {userName}!</h1>
+      <p className="dashboard-subtitle">
+        This is your CaroCart User Dashboard.
+      </p>
 
-      <button
-        onClick={handleProfile}
-        style={{ marginTop: 20, padding: "8px 16px", marginRight: "10px" }}
-      >
-        View Profile
-      </button>
+      <div className="button-container">
+        <button
+          onClick={handleProfile}
+          className="dashboard-button button-primary"
+        >
+          View Profile
+        </button>
 
-      <button
-        onClick={handleBrowseProducts}
-        style={{ marginTop: 20, padding: "8px 16px", marginRight: "10px" }}
-      >
-        Browse Products
-      </button>
+        <button
+          onClick={handleBrowseProducts}
+          className="dashboard-button button-secondary"
+        >
+          Browse Products
+        </button>
 
-      <button
-        onClick={handleLogout}
-        style={{ marginTop: 20, padding: "8px 16px" }}
-      >
-        Logout
-      </button>
+        <button
+          onClick={handleLogout}
+          className="dashboard-button button-logout"
+        >
+          Logout
+        </button>
+      </div>
     </div>
   );
 };
