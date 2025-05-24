@@ -5,7 +5,7 @@ import UserSignup from "./pages/user/UserSignup";
 import UserLogin from "./pages/user/UserLogin";
 import UserDashBoard from "./pages/user/UserDashBoard";
 import UserProfile from "./pages/user/UserProfile";
-import ProductList from "./pages/user/ProductList"; // <-- new import
+import ProductList from "./pages/user/ProductList";
 
 import VendorSignupOtpRequest from "./pages/vendor/VendorSignupOtpRequest";
 import VendorSignupOtpVerify from "./pages/vendor/VendorSignupOtpVerify";
@@ -13,11 +13,13 @@ import VendorLogin from "./pages/vendor/VendorLogin";
 import VendorDashboard from "./pages/vendor/VendorDashboard";
 import VendorProfile from "./pages/vendor/VendorProfile";
 
-import AdminLogin from "./pages/admin/AdminLogin"; // Admin login page
-import AdminDashboard from "./pages/admin/AdminDashboard"; // Admin approve vendors page
-import AdminProductManagement from "./pages/admin/AdminProductManagement"; // <-- new import
-import AdminVendorApproval from "./pages/admin/AdminVendorApproval"; // <-- new import
-import AdminAddProduct from "./pages/admin/AdminAddProduct"; // <-- new import
+import AdminLogin from "./pages/admin/AdminLogin";
+import AdminDashboard from "./pages/admin/AdminDashboard"; 
+import AdminProductManagement from "./pages/admin/AdminProductManagement";
+import AdminVendorApproval from "./pages/admin/AdminVendorApproval";
+import AdminAddProduct from "./pages/admin/AdminAddProduct";
+import AdminAddCategory from "./pages/admin/AdminAddCategory";
+
 
 import PrivateRoute from "./components/PrivateRoute";
 
@@ -106,6 +108,16 @@ function App() {
             </PrivateRoute>
           }
         />
+
+        <Route
+          path="/admins/categories/add"
+          element={
+            <PrivateRoute role="ADMIN">
+              <AdminAddCategory />
+            </PrivateRoute>
+          }
+        />
+
         <Route
           path="/admins/products/add"
           element={
