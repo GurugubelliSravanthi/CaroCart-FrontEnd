@@ -1,4 +1,3 @@
-// src/pages/UserDashBoard.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -13,7 +12,7 @@ function parseJwt(token) {
 
 const UserDashBoard = () => {
   const navigate = useNavigate();
-  const [userEmail, setUserEmail] = useState("User");
+  const [userName, setUserName] = useState("User");
 
   useEffect(() => {
     const token = localStorage.getItem("carocart_token");
@@ -25,18 +24,18 @@ const UserDashBoard = () => {
 
     const decoded = parseJwt(token);
 
-    // Check token expiration
     if (!decoded || !decoded.exp || decoded.exp * 1000 < Date.now()) {
-      // Token expired or invalid, logout
       localStorage.removeItem("carocart_token");
       navigate("/login");
       return;
     }
 
-    if (decoded && decoded.sub) {
-      setUserEmail(decoded.sub);
+    // Use firstName and lastName from token if available
+    if (decoded.firstName && decoded.lastName) {
+      setUserName(`${decoded.firstName} ${decoded.lastName}`);
+    } else if (decoded.sub) {
+      setUserName(decoded.sub); // fallback to email
     } else {
-      console.error("Invalid token");
       localStorage.removeItem("carocart_token");
       navigate("/login");
     }
@@ -57,7 +56,7 @@ const UserDashBoard = () => {
 
   return (
     <div style={{ padding: 20 }}>
-      <h1>Welcome, {userEmail}!</h1>
+      <h1>Welcome, {userName}!</h1>
       <p>This is your CaroCart User Dashboard.</p>
 
       <button

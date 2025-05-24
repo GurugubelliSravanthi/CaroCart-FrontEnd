@@ -1,0 +1,106 @@
+/* Product Management Styles - Zepto-inspired Design */
+
+.product-management {
+    padding: 2rem;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+  }
+  
+  .page-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.25rem;
+  }
+  
+  .page-subtitle {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+  }
+  
+  .add-product-btn {
+    font-weight: 500;
+    padding: 0.5rem 1.25rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+  
+  .no-products-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    background-color: white;
+  }
+  
+  .products-table-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    background-color: white;
+    overflow: hidden;
+  }
+  
+  .products-table {
+    margin-bottom: 0;
+  }
+  
+  .products-table th {
+    font-weight: 600;
+    color: #2c3e50;
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    padding: 1rem;
+  }
+  
+  .products-table td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f1f1;
+  }
+  
+  .products-table tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .product-name {
+    font-weight: 500;
+    color: #2c3e50;
+  }
+  
+  .product-desc {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .product-price {
+    font-weight: 600;
+    color: #27ae60;
+  }
+  
+  .product-qty {
+    font-weight: 500;
+  }
+  
+  .product-actions .btn {
+    min-width: 70px;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .product-management {
+      padding: 1.5rem;
+    }
+    
+    .page-title {
+      font-size: 1.5rem;
+    }
+    
+    .products-table th, 
+    .products-table td {
+      padding: 0.75rem;
+    }
+  }
