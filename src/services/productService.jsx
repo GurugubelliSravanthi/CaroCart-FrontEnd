@@ -45,3 +45,8 @@ export const getAllProducts = () => {
 export const getProductById = (productId) => {
   return axios.get(`${PRODUCT_API_BASE}/products/${productId}`);
 };
+
+// User: Get products by subcategory ID
+export const getProductsBySubCategory = (subCategoryId) => {
+  return axios.get(`${PRODUCT_API_BASE}/products/subcategory/${subCategoryId}`);
+};
