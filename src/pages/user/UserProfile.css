@@ -1,0 +1,125 @@
+/* UserProfile.css */
+
+.user-profile-container {
+    max-width: 500px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+  }
+  
+  .user-profile-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  
+  .user-profile-message {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+  
+  .user-profile-message.success {
+    background-color: #f0fff4;
+    color: #2f855a;
+    border: 1px solid #c6f6d5;
+  }
+  
+  .user-profile-message.error {
+    background-color: #fff5f5;
+    color: #c53030;
+    border: 1px solid #fed7d7;
+  }
+  
+  .user-profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .form-label {
+    font-size: 0.95rem;
+    color: #4a5568;
+    font-weight: 500;
+  }
+  
+  .form-input {
+    padding: 0.75rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    background-color: #fff;
+  }
+  
+  .form-input:focus {
+    outline: none;
+    border-color: #4299e1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+  }
+  
+  .form-input[readonly] {
+    background-color: #f8fafc;
+    color: #64748b;
+    cursor: not-allowed;
+  }
+  
+  .submit-button {
+    padding: 0.75rem 1.5rem;
+    background-color: #4299e1;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 0.5rem;
+  }
+  
+  .submit-button:hover {
+    background-color: #3182ce;
+    transform: translateY(-1px);
+  }
+  
+  .submit-button:active {
+    transform: translateY(0);
+  }
+  
+  .submit-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.3);
+  }
+  
+  .loading-text {
+    text-align: center;
+    color: #4a5568;
+    font-size: 1.1rem;
+    padding: 2rem;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 600px) {
+    .user-profile-container {
+      margin: 1rem;
+      padding: 1.5rem;
+    }
+    
+    .user-profile-title {
+      font-size: 1.5rem;
+    }
+  }
