@@ -1,0 +1,112 @@
+/* AppNavbar.css */
+
+.navbar-military {
+  background-color: #586F55 !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  padding: 0.5rem 0;
+}
+
+.navbar-brand-custom {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: white !important;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.navbar-brand-custom:hover {
+  opacity: 0.9;
+}
+
+.navbar-logo {
+  margin-right: 0.5rem;
+  font-size: 1.8rem;
+}
+
+.nav-login-btn {
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  color: white;
+  font-weight: 500;
+  padding: 0.5rem 1.25rem;
+  transition: all 0.3s ease;
+}
+
+.nav-login-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: white;
+}
+
+.nav-dropdown-custom .dropdown-toggle {
+  color: white !important;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-item-custom {
+  color: #333 !important;
+  padding: 0.5rem 1.5rem !important;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-item-custom:hover {
+  background-color: #f8f9fa !important;
+  color: #586F55 !important;
+}
+
+.dropdown-divider-custom {
+  margin: 0.25rem 0 !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Navbar toggle animation */
+.navbar-toggler {
+  border: none !important;
+  padding: 0.5rem !important;
+}
+
+.navbar-toggler:focus {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .navbar-collapse {
+    background-color: #4a5d48;
+    padding: 1rem;
+    margin-top: 0.5rem;
+    border-radius: 0.5rem;
+  }
+  
+  .nav-login-btn {
+    width: 100%;
+    text-align: center;
+    margin-top: 0.5rem;
+  }
+  
+  .nav-dropdown-custom {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .dropdown-menu {
+    border: none !important;
+    box-shadow: none !important;
+    background-color: transparent !important;
+  }
+  
+  .dropdown-item-custom {
+    color: white !important;
+    padding: 0.5rem 0 !important;
+    justify-content: center;
+  }
+  
+  .dropdown-item-custom:hover {
+    background-color: transparent !important;
+    color: #e2e2e2 !important;
+  }
+}
