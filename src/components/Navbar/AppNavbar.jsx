@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Navbar, Nav, Container, Button, NavDropdown } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import "./AppNavbar.css"; // Import the CSS file for custom styles
+import "./AppNavbar.css";
 
 function parseJwt(token) {
   try {
     return JSON.parse(atob(token.split(".")[1]));
   } catch (e) {
+    console.error("Failed to parse JWT:", e);
     return null;
   }
 }
@@ -14,6 +15,7 @@ function parseJwt(token) {
 const AppNavbar = () => {
   const navigate = useNavigate();
   const [userName, setUserName] = useState(null);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("carocart_token");
@@ -36,6 +38,15 @@ const AppNavbar = () => {
     }
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const handleLoginClick = () => navigate("/login");
   const handleLogout = () => {
     localStorage.removeItem("carocart_token");
@@ -50,16 +61,29 @@ const AppNavbar = () => {
       variant=""
       expand="lg"
       sticky="top"
-      className="navbar-military"
+      className={`navbar-military ${isScrolled ? "navbar-scrolled" : ""}`}
     >
       <Container>
         <Navbar.Brand
           onClick={() => navigate("/")}
           className="navbar-brand-custom"
         >
-          <span className="navbar-logo">🛒</span> CaroCart
+          <div className="navbar-logo-container">
+            <span className="navbar-logo">🛒</span>
+            <div className="navbar-logo-glow"></div>
+          </div>
+          <span className="navbar-brand-text">CaroCart</span>
         </Navbar.Brand>
-        <Navbar.Toggle aria-controls="carocart-navbar-nav" />
+
+        <Navbar.Toggle
+          aria-controls="carocart-navbar-nav"
+          className="navbar-toggler-custom"
+        >
+          <span className="toggler-icon"></span>
+          <span className="toggler-icon"></span>
+          <span className="toggler-icon"></span>
+        </Navbar.Toggle>
+
         <Navbar.Collapse id="carocart-navbar-nav">
           <Nav className="ms-auto">
             {!userName ? (
@@ -68,11 +92,19 @@ const AppNavbar = () => {
                 onClick={handleLoginClick}
                 className="nav-login-btn"
               >
-                Login / Sign Up
+                <span className="btn-text">Login / Sign Up</span>
+                <div className="btn-shine"></div>
               </Button>
             ) : (
               <NavDropdown
-                title={userName}
+                title={
+                  <div className="user-dropdown-title">
+                    <div className="user-avatar">
+                      {userName.charAt(0).toUpperCase()}
+                    </div>
+                    <span className="user-name">{userName}</span>
+                  </div>
+                }
                 id="user-nav-dropdown"
                 className="nav-dropdown-custom"
               >
@@ -80,14 +112,20 @@ const AppNavbar = () => {
                   onClick={handleProfile}
                   className="dropdown-item-custom"
                 >
-                  <i className="bi bi-person-fill me-2"></i>Profile
+                  <div className="dropdown-icon">
+                    <i className="bi bi-person-fill"></i>
+                  </div>
+                  <span>Profile</span>
                 </NavDropdown.Item>
                 <NavDropdown.Divider className="dropdown-divider-custom" />
                 <NavDropdown.Item
                   onClick={handleLogout}
-                  className="dropdown-item-custom"
+                  className="dropdown-item-custom logout-item"
                 >
-                  <i className="bi bi-box-arrow-right me-2"></i>Logout
+                  <div className="dropdown-icon">
+                    <i className="bi bi-box-arrow-right"></i>
+                  </div>
+                  <span>Logout</span>
                 </NavDropdown.Item>
               </NavDropdown>
             )}

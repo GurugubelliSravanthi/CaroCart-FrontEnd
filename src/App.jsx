@@ -24,6 +24,7 @@ import AdminAddCategory from "./pages/admin/AdminAddCategory";
 import PrivateRoute from "./components/PrivateRoute";
 import HomePage from "./pages/home/HomePage";
 import AppNavbar from "./components/Navbar/AppNavbar";
+import UserCart from "./pages/user/UserCart";
 
 function App() {
   return (
@@ -35,6 +36,8 @@ function App() {
         {/* User routes */}
         <Route path="/signup" element={<UserSignup />} />
         <Route path="/login" element={<UserLogin />} />
+        <Route path="/user/cart" element={<UserCart />} />
+
         <Route
           path="/dashboard"
           element={
