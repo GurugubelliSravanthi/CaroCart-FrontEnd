@@ -1,28 +1,27 @@
 import axios from "axios";
 
-const CART_BASE_URL = "http://localhost:8083/cart"; // Replace 8083 with your actual CartService port if different
+const CART_BASE_URL = "http://localhost:8083/cart";
 
-// ⬆️ Utility function to get auth token from localStorage (if needed)
+// Utility function to get auth token from localStorage
 const getAuthHeaders = () => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("carocart_token");
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
 const cartService = {
-  // ✅ Get all cart items for a user
-  getCartItems: async (userId) => {
-    const response = await axios.get(`${CART_BASE_URL}/${userId}`, {
+  // ✅ Get cart items for current user
+  getCartItems: async () => {
+    const response = await axios.get(`${CART_BASE_URL}/get`, {
       headers: getAuthHeaders(),
     });
     return response.data;
   },
 
   // ✅ Add item to cart
-  addToCart: async (userId, productId, quantity) => {
+  addToCart: async (productId, quantity) => {
     const response = await axios.post(
       `${CART_BASE_URL}/add`,
       {
-        userId,
         productId,
         quantity,
       },
@@ -33,12 +32,11 @@ const cartService = {
     return response.data;
   },
 
-  // ✅ Update cart item quantity
-  updateCartItem: async (userId, productId, quantity) => {
+  // ✅ Update item quantity
+  updateCartItem: async (productId, quantity) => {
     const response = await axios.put(
       `${CART_BASE_URL}/update`,
       {
-        userId,
         productId,
         quantity,
       },
@@ -49,10 +47,10 @@ const cartService = {
     return response.data;
   },
 
-  // ✅ Remove item from cart
-  removeCartItem: async (userId, productId) => {
+  // ✅ Remove item
+  removeCartItem: async (productId) => {
     const response = await axios.delete(
-      `${CART_BASE_URL}/remove/${userId}/${productId}`,
+      `${CART_BASE_URL}/remove/${productId}`,
       {
         headers: getAuthHeaders(),
       }
@@ -60,9 +58,9 @@ const cartService = {
     return response.data;
   },
 
-  // ✅ Clear all cart items for a user
-  clearCart: async (userId) => {
-    const response = await axios.delete(`${CART_BASE_URL}/clear/${userId}`, {
+  // ✅ Clear all items
+  clearCart: async () => {
+    const response = await axios.delete(`${CART_BASE_URL}/clear`, {
       headers: getAuthHeaders(),
     });
     return response.data;

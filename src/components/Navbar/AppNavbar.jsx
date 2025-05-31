@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Navbar, Nav, Container, Button, NavDropdown } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { FaShoppingCart } from "react-icons/fa"; // cart icon
 import "./AppNavbar.css";
 
 function parseJwt(token) {
@@ -18,24 +19,38 @@ const AppNavbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("carocart_token");
-    if (!token) {
-      setUserName(null);
-      return;
-    }
+    const updateUserName = () => {
+      const token = localStorage.getItem("carocart_token");
+      if (!token) {
+        setUserName(null);
+        return;
+      }
 
-    const decoded = parseJwt(token);
-    if (!decoded || !decoded.exp || decoded.exp * 1000 < Date.now()) {
-      localStorage.removeItem("carocart_token");
-      setUserName(null);
-      return;
-    }
+      const decoded = parseJwt(token);
+      if (!decoded || !decoded.exp || decoded.exp * 1000 < Date.now()) {
+        localStorage.removeItem("carocart_token");
+        setUserName(null);
+        return;
+      }
 
-    if (decoded.firstName && decoded.lastName) {
-      setUserName(`${decoded.firstName} ${decoded.lastName}`);
-    } else if (decoded.sub) {
-      setUserName(decoded.sub);
-    }
+      if (decoded.firstName && decoded.lastName) {
+        setUserName(`${decoded.firstName} ${decoded.lastName}`);
+      } else if (decoded.sub) {
+        setUserName(decoded.sub);
+      } else {
+        setUserName(null);
+      }
+    };
+
+    updateUserName();
+
+    window.addEventListener("carocart-login", updateUserName);
+    window.addEventListener("carocart-logout", updateUserName);
+
+    return () => {
+      window.removeEventListener("carocart-login", updateUserName);
+      window.removeEventListener("carocart-logout", updateUserName);
+    };
   }, []);
 
   useEffect(() => {
@@ -48,11 +63,15 @@ const AppNavbar = () => {
   }, []);
 
   const handleLoginClick = () => navigate("/login");
+
   const handleLogout = () => {
     localStorage.removeItem("carocart_token");
     setUserName(null);
+    // Dispatch event so navbar updates immediately
+    window.dispatchEvent(new Event("carocart-logout"));
     navigate("/login");
   };
+
   const handleProfile = () => navigate("/profile");
 
   return (
@@ -67,6 +86,7 @@ const AppNavbar = () => {
         <Navbar.Brand
           onClick={() => navigate("/")}
           className="navbar-brand-custom"
+          style={{ cursor: "pointer" }}
         >
           <div className="navbar-logo-container">
             <span className="navbar-logo">🛒</span>
@@ -85,7 +105,20 @@ const AppNavbar = () => {
         </Navbar.Toggle>
 
         <Navbar.Collapse id="carocart-navbar-nav">
-          <Nav className="ms-auto">
+          <Nav className="ms-auto align-items-center">
+            {/* Cart Icon always visible if logged in */}
+            {userName && (
+              <Nav.Link
+                as={Link}
+                to="/user/cart"
+                className="me-3"
+                title="My Cart"
+                style={{ fontSize: "1.3rem", color: "white" }}
+              >
+                <FaShoppingCart />
+              </Nav.Link>
+            )}
+
             {!userName ? (
               <Button
                 variant="outline-light"

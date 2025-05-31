@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import cartService from "../../services/cartService";
 import "./ProductList.css";
 
 const API_BASE = "http://localhost:8082/products";
@@ -9,6 +10,7 @@ const ProductList = () => {
   const [quantities, setQuantities] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [message, setMessage] = useState(""); // ✅ for user feedback
 
   useEffect(() => {
     fetchProducts();
@@ -20,7 +22,6 @@ const ProductList = () => {
       const res = await axios.get(`${API_BASE}/all`);
       setProducts(res.data);
 
-      // Initialize quantities with default 1
       const initialQuantities = {};
       res.data.forEach((p) => {
         initialQuantities[p.id] = 1;
@@ -41,7 +42,19 @@ const ProductList = () => {
     });
   };
 
-  // Group products by Category and SubCategory
+  const handleAddToCart = async (productId) => {
+    try {
+      const quantity = quantities[productId] || 1;
+      await cartService.addToCart(productId, quantity);
+      setMessage("Added to cart successfully!");
+      setTimeout(() => setMessage(""), 2000);
+    } catch (err) {
+      console.error("Failed to add to cart", err);
+      setMessage("Failed to add to cart. Please login.");
+      setTimeout(() => setMessage(""), 3000);
+    }
+  };
+
   const groupedByCategory = products.reduce((acc, product) => {
     const category = product.subCategory?.category || {
       id: "uncat",
@@ -93,6 +106,8 @@ const ProductList = () => {
   return (
     <div className="product-list-container">
       <h2>Our Products</h2>
+      {message && <div className="feedback-message">{message}</div>}
+
       {products.length === 0 ? (
         <p className="no-products">No products available</p>
       ) : (
@@ -155,6 +170,13 @@ const ProductList = () => {
                             +
                           </button>
                         </div>
+                        <button
+                          className="add-to-cart-btn"
+                          onClick={() => handleAddToCart(p.id)}
+                          disabled={p.stock <= 0}
+                        >
+                          Add to Cart
+                        </button>
                       </div>
                     </div>
                   ))}
