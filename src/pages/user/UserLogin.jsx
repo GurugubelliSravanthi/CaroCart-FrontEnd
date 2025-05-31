@@ -2,6 +2,17 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./UserLogin.css";
 
+// Simple JWT decode function to parse payload (without verifying signature)
+function parseJwt(token) {
+  try {
+    const base64Payload = token.split(".")[1];
+    const payload = atob(base64Payload.replace(/-/g, "+").replace(/_/g, "/"));
+    return JSON.parse(payload);
+  } catch (e) {
+    return null;
+  }
+}
+
 const UserLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,6 +38,28 @@ const UserLogin = () => {
 
       const token = await res.text();
       localStorage.setItem("carocart_token", token);
+
+      // Decode JWT to extract user info (like email and role)
+      const user = parseJwt(token);
+      if (user) {
+        // Save minimal user info in localStorage as "user"
+        // Adjust fields depending on your JWT payload structure
+        localStorage.setItem(
+          "user",
+          JSON.stringify({
+            email: user.sub,
+            role: user.role,
+            // add other claims if needed
+          })
+        );
+      } else {
+        // If decoding fails, fallback to empty user
+        localStorage.setItem("user", JSON.stringify({ email: "", role: "" }));
+      }
+
+      // ✅ Notify navbar and other listeners
+      window.dispatchEvent(new Event("carocart-login"));
+
       alert("Login successful!");
       navigate("/dashboard");
     } catch (error) {
