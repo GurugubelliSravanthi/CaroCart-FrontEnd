@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { adminLogin } from "../../services/authService";
-import "./AdminLogin.css"; // Import the CSS file
+import "./AdminLogin.css";
 
 const AdminLogin = () => {
   const navigate = useNavigate();
@@ -17,6 +17,10 @@ const AdminLogin = () => {
       if (response.data.token) {
         localStorage.setItem("carocart_token", response.data.token);
         localStorage.setItem("role", "ADMIN");
+
+        // ✅ Dispatch login event to update AppNavbar
+        window.dispatchEvent(new Event("carocart-login"));
+
         navigate("/admins/dashboard");
       } else {
         setError("Login failed: No token received");
