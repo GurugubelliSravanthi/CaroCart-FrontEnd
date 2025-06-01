@@ -65,11 +65,27 @@ const AppNavbar = () => {
   const handleLoginClick = () => navigate("/login");
 
   const handleLogout = () => {
+    const token = localStorage.getItem("carocart_token");
+    let role = null;
+
+    if (token) {
+      const decoded = parseJwt(token);
+      role =
+        decoded?.role ||
+        decoded?.roles?.[0] ||
+        decoded?.authorities?.[0]?.authority ||
+        null;
+    }
+
     localStorage.removeItem("carocart_token");
     setUserName(null);
-    // Dispatch event so navbar updates immediately
     window.dispatchEvent(new Event("carocart-logout"));
-    navigate("/login");
+
+    if (role === "ADMIN") {
+      navigate("/admins/login");
+    } else {
+      navigate("/login");
+    }
   };
 
   const handleProfile = () => navigate("/profile");
@@ -106,7 +122,6 @@ const AppNavbar = () => {
 
         <Navbar.Collapse id="carocart-navbar-nav">
           <Nav className="ms-auto align-items-center">
-            {/* Cart Icon always visible if logged in */}
             {userName && (
               <Nav.Link
                 as={Link}
