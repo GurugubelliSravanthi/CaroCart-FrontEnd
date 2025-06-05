@@ -1,9 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { FiEye, FiEyeOff } from "react-icons/fi";
 import "./UserLogin.css";
-import { FaOpencart } from "react-icons/fa6";
-
 
 // JWT decode
 function parseJwt(token) {
@@ -14,6 +11,13 @@ function parseJwt(token) {
   } catch (e) {
     return null;
   }
+}
+
+function getUserRoleFromToken() {
+  const token = localStorage.getItem("carocart_token");
+  if (!token) return null;
+  const payload = parseJwt(token);
+  return payload?.role || null;
 }
 
 const EyeIcon = ({ onClick, visible }) => (
@@ -54,6 +58,14 @@ const UserLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
+  // ✅ Redirect if already logged in as USER
+  useEffect(() => {
+    const role = getUserRoleFromToken();
+    if (role === "USER") {
+      navigate("/");
+    }
+  }, [navigate]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -74,7 +86,9 @@ const UserLogin = () => {
       const user = parseJwt(token);
       localStorage.setItem(
         "user",
-        JSON.stringify(user ? { email: user.sub, role: user.role } : { email: "", role: "" })
+        JSON.stringify(
+          user ? { email: user.sub, role: user.role } : { email: "", role: "" }
+        )
       );
       window.dispatchEvent(new Event("carocart-login"));
       alert("Login successful!");
@@ -118,20 +132,28 @@ const UserLogin = () => {
               placeholder="Enter your password"
             />
             <div className="eye-icon">
-              <EyeIcon onClick={() => setShowPassword(!showPassword)} visible={showPassword} />
+              <EyeIcon
+                onClick={() => setShowPassword(!showPassword)}
+                visible={showPassword}
+              />
             </div>
           </div>
 
           <p>
-  Forgot your password? <Link to="/forgot-password">Reset it here</Link>
-</p>
+            Forgot your password?{" "}
+            <Link to="/forgot-password">Reset it here</Link>
+          </p>
 
-          <button type="submit" className="login-button">Sign In</button>
+          <button type="submit" className="login-button">
+            Sign In
+          </button>
         </form>
 
         <div className="login-footer">
           Don't have an account?{" "}
-          <Link to="/signup" className="login-link">Register here</Link>
+          <Link to="/signup" className="login-link">
+            Register here
+          </Link>
         </div>
       </div>
     </div>
