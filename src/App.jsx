@@ -118,41 +118,14 @@ function App() {
               <AdminDashboard />
             </PrivateRoute>
           }
-        />
-        <Route
-          path="/admins/vendors/pending"
-          element={
-            <PrivateRoute role="ADMIN">
-              <AdminVendorApproval />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/admins/products"
-          element={
-            <PrivateRoute role="ADMIN">
-              <AdminProductManagement />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/admins/categories/add"
-          element={
-            <PrivateRoute role="ADMIN">
-              <AdminAddCategory />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/admins/products/add"
-          element={
-            <PrivateRoute role="ADMIN">
-              <AdminAddProduct />
-            </PrivateRoute>
-          }
-        />
+        >
+          <Route path="vendors/pending" element={<AdminVendorApproval />} />
+          <Route path="products" element={<AdminProductManagement />} />
+          <Route path="products/add" element={<AdminAddProduct />} />
+          <Route path="categories/add" element={<AdminAddCategory />} />
+          {/* <Route path="orders" element={<AdminOrderManagement />} /> */}
+          {/* <Route path="analytics" element={<AdminAnalytics />} /> */}
+        </Route>
       </Routes>
     </Router>
   );
