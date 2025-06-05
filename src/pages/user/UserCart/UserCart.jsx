@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import cartService from "../../services/cartService";
+import cartService from "../../../services/cartService";
 import "./UserCart.css";
 import { useNavigate } from "react-router-dom";
 import { FiShoppingCart, FiTrash2, FiPlus, FiMinus } from "react-icons/fi";

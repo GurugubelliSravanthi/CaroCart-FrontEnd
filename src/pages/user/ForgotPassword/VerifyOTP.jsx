@@ -1,6 +1,7 @@
 // src/pages/user/VerifyOtp.js
 import React, { useState } from "react";
-import { verifyOTP } from "../../services/authService";
+import { verifyOTP } from "../../../services/authService";
+import "./VerifyOTP.css"; // Assuming you have some styles for the form
 
 const VerifyOTP = ({ emailOrPhone, onSuccess, onBack }) => {
   const [otp, setOtp] = useState("");

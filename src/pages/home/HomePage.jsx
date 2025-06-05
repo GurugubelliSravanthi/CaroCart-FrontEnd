@@ -1,256 +1,193 @@
 import React, { useEffect, useState } from "react";
-import {
-  getAllCategories,
-  getSubCategoriesByCategoryId,
-} from "../../services/categoryService";
-import { getAllProducts } from "../../services/productService";
+import axios from "axios";
+import cartService from "../../services/cartService";
 import "./HomePage.css";
 
 const API_BASE = "http://localhost:8082/products";
 
-const HomePage = () => {
-  const [categories, setCategories] = useState([]);
-  const [subcategoriesMap, setSubcategoriesMap] = useState({});
+const ProductList = () => {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [favorites, setFavorites] = useState(new Set());
+  const [quantities, setQuantities] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [message, setMessage] = useState(""); // ✅ for user feedback
 
   useEffect(() => {
-    fetchData();
+    fetchProducts();
   }, []);
 
-  const fetchData = async () => {
+  const fetchProducts = async () => {
     try {
-      setLoading(true);
-      const [categoryRes, productRes] = await Promise.all([
-        getAllCategories(),
-        getAllProducts(),
-      ]);
+      setIsLoading(true);
+      const res = await axios.get(`${API_BASE}/all`);
+      setProducts(res.data);
 
-      const allCategories = categoryRes.data;
-      const allProducts = productRes.data;
-
-      const subMap = {};
-      await Promise.all(
-        allCategories.map(async (cat) => {
-          const subRes = await getSubCategoriesByCategoryId(cat.id);
-          const nonEmptySubcategories = subRes.data.filter((sub) =>
-            allProducts.some((p) => p.subCategory?.id === sub.id)
-          );
-          if (nonEmptySubcategories.length > 0) {
-            subMap[cat.id] = nonEmptySubcategories;
-          }
-        })
-      );
-
-      // Filter out categories with no non-empty subcategories
-      const filteredCategories = allCategories.filter(
-        (cat) => subMap[cat.id]?.length > 0
-      );
-
-      setCategories(filteredCategories);
-      setSubcategoriesMap(subMap);
-      setProducts(allProducts);
+      const initialQuantities = {};
+      res.data.forEach((p) => {
+        initialQuantities[p.id] = 1;
+      });
+      setQuantities(initialQuantities);
     } catch (err) {
-      console.error("Failed to load homepage data", err);
+      console.error("Failed to fetch products:", err);
+      setError("Failed to load products. Please try again later.");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  const getProductsBySubcategory = (subCategoryId) =>
-    products.filter((p) => p.subCategory?.id === subCategoryId);
-
-  const toggleFavorite = (productId) => {
-    setFavorites((prev) => {
-      const newFavorites = new Set(prev);
-      newFavorites.has(productId)
-        ? newFavorites.delete(productId)
-        : newFavorites.add(productId);
-      return newFavorites;
+  const handleQuantityChange = (productId, delta) => {
+    setQuantities((prev) => {
+      const newQty = Math.max(1, (prev[productId] || 1) + delta);
+      return { ...prev, [productId]: newQty };
     });
   };
 
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: "INR",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price);
+  const handleAddToCart = async (productId) => {
+    try {
+      const quantity = quantities[productId] || 1;
+      await cartService.addToCart(productId, quantity);
+      setMessage("Added to cart successfully!");
+      setTimeout(() => setMessage(""), 2000);
+    } catch (err) {
+      console.error("Failed to add to cart", err);
+      setMessage("Failed to add to cart. Please login.");
+      setTimeout(() => setMessage(""), 3000);
+    }
   };
 
-  if (loading) {
+  const groupedByCategory = products.reduce((acc, product) => {
+    const category = product.subCategory?.category || {
+      id: "uncat",
+      name: "Uncategorized",
+    };
+    const subCategory = product.subCategory || {
+      id: "uncat",
+      name: "Uncategorized",
+    };
+
+    if (!acc[category.id]) {
+      acc[category.id] = { categoryName: category.name, subCategories: {} };
+    }
+
+    if (!acc[category.id].subCategories[subCategory.id]) {
+      acc[category.id].subCategories[subCategory.id] = {
+        subCategoryName: subCategory.name,
+        products: [],
+      };
+    }
+
+    acc[category.id].subCategories[subCategory.id].products.push(product);
+
+    return acc;
+  }, {});
+
+  const getStockStatusClass = (stock) => {
+    if (stock > 10) return "in-stock";
+    if (stock > 0) return "low-stock";
+    return "out-of-stock";
+  };
+
+  if (isLoading) {
     return (
-      <div className="loading-container">
-        <div className="loading-content">
-          <div className="spinner"></div>
-          <p className="loading-text">Loading products...</p>
-        </div>
+      <div className="product-list-container">
+        <div className="loading-spinner">Loading products...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="product-list-container">
+        <div className="error-message">{error}</div>
       </div>
     );
   }
 
   return (
-    <div className="home-container">
-      {/* Hero Section */}
-      <div className="hero-section">
-        <div className="hero-content">
-          <h1 className="hero-title">CaroCart</h1>
-          <p className="hero-subtitle">
-            Discover premium products curated just for you
-          </p>
-          <div className="hero-features">
-            <span className="feature-badge">Premium Quality</span>
-            <span className="feature-badge">Best Prices</span>
-            <span className="feature-badge">Fast Delivery</span>
-          </div>
-        </div>
-      </div>
+    <div className="product-list-container">
+      <h2>Our Products</h2>
+      {message && <div className="feedback-message">{message}</div>}
 
-      {/* Main Content */}
-      <div className="main-content">
-        {categories.map((cat) => (
-          <div key={cat.id} className="category-section">
-            {/* Category Header */}
-            <div className="category-header">
-              <h2 className="category-title">{cat.name}</h2>
-              <div className="category-divider"></div>
-              <p className="category-description">
-                Explore our curated collection of premium{" "}
-                {cat.name.toLowerCase()}
-              </p>
-            </div>
-
-            {/* Subcategories */}
-            <div className="subcategory-container">
-              {subcategoriesMap[cat.id]?.map((sub) => {
-                const subProducts = getProductsBySubcategory(sub.id);
-                return (
-                  <div key={sub.id} className="subcategory-section">
-                    <div className="subcategory-header">
-                      <h3 className="subcategory-title">
-                        <span className="subcategory-indicator"></span>
-                        {sub.name}
-                        <span className="product-count">
-                          {subProducts.length} items
-                        </span>
-                      </h3>
-                    </div>
-
-                    {/* Products */}
-                    <div className="products-container">
-                      <div className="product-grid">
-                        {subProducts.map((product) => (
-                          <div key={product.id} className="product-card">
-                            {/* Image */}
-                            <div className="product-image-container">
-                              <img
-                                src={
-                                  product.image
-                                    ? `${API_BASE}/image/${product.id}`
-                                    : "https://via.placeholder.com/300x300?text=No+Image"
-                                }
-                                alt={product.name}
-                                className="product-image"
-                                onError={(e) => {
-                                  e.target.src =
-                                    "https://via.placeholder.com/300x300?text=No+Image";
-                                }}
-                              />
-
-                              {/* Overlay */}
-                              <div className="product-overlay">
-                                <button
-                                  onClick={() => toggleFavorite(product.id)}
-                                  className={`action-btn favorite-btn ${
-                                    favorites.has(product.id) ? "active" : ""
-                                  }`}
-                                >
-                                  ♥
-                                </button>
-                                <button className="action-btn view-btn">
-                                  👁
-                                </button>
-                              </div>
-
-                              {/* Badges */}
-                              <div className="product-badges">
-                                {product.discount && (
-                                  <span className="discount-badge">
-                                    -{product.discount}%
-                                  </span>
-                                )}
-                                {!product.isAvailable && (
-                                  <span className="stock-badge">
-                                    Out of Stock
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-
-                            {/* Info */}
-                            <div className="product-info">
-                              {product.brand && (
-                                <p className="product-brand">{product.brand}</p>
-                              )}
-                              <h4 className="product-name">{product.name}</h4>
-                              <div className="price-container">
-                                <div className="price-info">
-                                  <span className="current-price">
-                                    {formatPrice(product.price || 0)}
-                                  </span>
-                                  {product.mrp &&
-                                    product.mrp > product.price && (
-                                      <span className="original-price">
-                                        {formatPrice(product.mrp)}
-                                      </span>
-                                    )}
-                                </div>
-                                {product.unit && (
-                                  <p className="price-unit">
-                                    per {product.unit}
-                                  </p>
-                                )}
-                              </div>
-                              <div className="stock-status">
-                                <div
-                                  className={`stock-indicator ${
-                                    product.isAvailable && product.stock > 0
-                                      ? "in-stock"
-                                      : "out-of-stock"
-                                  }`}
-                                >
-                                  <div className="stock-dot"></div>
-                                  {product.isAvailable && product.stock > 0
-                                    ? `${product.stock} in stock`
-                                    : "Out of stock"}
-                                </div>
-                              </div>
-                              <button
-                                disabled={
-                                  !product.isAvailable || product.stock === 0
-                                }
-                                className="add-to-cart-btn"
-                              >
-                                {product.isAvailable && product.stock > 0
-                                  ? "Add to Cart"
-                                  : "Notify Me"}
-                              </button>
-                            </div>
-                          </div>
-                        ))}
+      {products.length === 0 ? (
+        <p className="no-products">No products available</p>
+      ) : (
+        Object.values(groupedByCategory).map((category) => (
+          <div key={category.categoryName} className="category-section">
+            <h2>{category.categoryName}</h2>
+            {Object.values(category.subCategories).map((subCat) => (
+              <div key={subCat.subCategoryName}>
+                <h3>{subCat.subCategoryName}</h3>
+                <div className="products-grid">
+                  {subCat.products.map((p) => (
+                    <div key={p.id} className="product-card">
+                      <div className="product-image-container">
+                        <img
+                          src={
+                            p.image
+                              ? `${API_BASE}/image/${p.id}`
+                              : "/placeholder-product.jpg"
+                          }
+                          alt={p.name}
+                          className="product-image"
+                          onError={(e) => {
+                            e.target.src = "/placeholder-product.jpg";
+                          }}
+                        />
+                      </div>
+                      <div className="product-info">
+                        <h4 className="product-name">{p.name}</h4>
+                        <p className="product-description">
+                          {p.description || "No description available"}
+                        </p>
+                        <p className="product-price">
+                          ₹{p.price.toLocaleString()}
+                        </p>
+                        <p
+                          className={`product-stock ${getStockStatusClass(
+                            p.stock
+                          )}`}
+                        >
+                          {p.stock > 0 ? `${p.stock} in stock` : "Out of stock"}
+                        </p>
+                        <div className="quantity-controls">
+                          <button
+                            className="quantity-btn"
+                            onClick={() => handleQuantityChange(p.id, -1)}
+                            disabled={quantities[p.id] <= 1}
+                          >
+                            -
+                          </button>
+                          <span className="quantity-display">
+                            {quantities[p.id] || 1}
+                          </span>
+                          <button
+                            className="quantity-btn"
+                            onClick={() => handleQuantityChange(p.id, 1)}
+                            disabled={
+                              p.stock <= 0 || quantities[p.id] >= p.stock
+                            }
+                          >
+                            +
+                          </button>
+                        </div>
+                        <button
+                          className="add-to-cart-btn"
+                          onClick={() => handleAddToCart(p.id)}
+                          disabled={p.stock <= 0}
+                        >
+                          Add to Cart
+                        </button>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        ))
+      )}
     </div>
   );
 };
 
-export default HomePage;
+export default ProductList;

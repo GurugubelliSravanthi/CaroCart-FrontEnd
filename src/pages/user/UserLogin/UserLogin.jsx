@@ -78,7 +78,7 @@ const UserLogin = () => {
       );
       window.dispatchEvent(new Event("carocart-login"));
       alert("Login successful!");
-      navigate("/dashboard");
+      navigate("/");
     } catch (error) {
       alert("An error occurred: " + error.message);
     }
