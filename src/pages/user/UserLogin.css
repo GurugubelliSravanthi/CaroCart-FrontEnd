@@ -1,13 +1,3 @@
-/* Full page background */
-body,
-html {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #586f55 0%, #4a5d48 50%, #3d4e3b 100%);
-}
-
 #root {
   height: 100%;
 }
@@ -123,17 +113,16 @@ html {
   position: relative;
 }
 
-/* Ensure right padding for icon */
 .password-group input {
   padding-right: 44px;
 }
 
-/* Eye icon fixed position */
 .eye-icon {
-  position: absolute;
+  position: absolute ;
   top: 50%;
   right: 14px;
-  transform: translateY(-50%);
+  /* transform: translateY(-50%); */
   color: #000;
-  pointer-events: all;
+  cursor: pointer;
+  font-size: 1.2rem;
 }

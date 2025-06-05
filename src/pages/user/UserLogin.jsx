@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 import "./UserLogin.css";
+import { FaOpencart } from "react-icons/fa6";
+
 
 // JWT decode (basic)
 function parseJwt(token) {
@@ -12,38 +15,6 @@ function parseJwt(token) {
     return null;
   }
 }
-
-const EyeIcon = ({ onClick, visible }) => (
-  <svg
-    onClick={onClick}
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    style={{ cursor: "pointer" }}
-    viewBox="0 0 24 24"
-    aria-label={visible ? "Hide password" : "Show password"}
-    role="button"
-  >
-    {visible ? (
-      <>
-        <path d="M17.94 17.94A10.93 10.93 0 0112 19c-7 0-10-7-10-7a17.56 17.56 0 014.61-5.46" />
-        <path d="M1 1l22 22" />
-        <path d="M9.53 9.53a3 3 0 004.24 4.24" />
-        <path d="M14.12 14.12A3 3 0 019.88 9.88" />
-      </>
-    ) : (
-      <>
-        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-        <circle cx="12" cy="12" r="3" />
-      </>
-    )}
-  </svg>
-);
 
 const UserLogin = () => {
   const [email, setEmail] = useState("");
@@ -98,7 +69,9 @@ const UserLogin = () => {
       <div className="login-container">
         <div className="login-header">
           <h2 className="login-title">Welcome Back</h2>
-          <p className="login-subtitle">Please enter your credentials to login</p>
+          <p className="login-subtitle">
+            Please enter your credentials to login
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="login-form">
@@ -124,9 +97,12 @@ const UserLogin = () => {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
             />
-            <div className="eye-icon">
-              <EyeIcon onClick={() => setShowPassword(!showPassword)} visible={showPassword} />
-            </div>
+            <span
+              className="eye-icon"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <FiEyeOff size={22} /> : <FiEye size={22} />}
+            </span>
           </div>
 
           <button type="submit" className="login-button">
