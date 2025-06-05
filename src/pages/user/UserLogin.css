@@ -1,8 +1,19 @@
+<<<<<<< HEAD
+=======
+body,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #586f55 0%, #4a5d48 50%, #3d4e3b 100%);
+}
+
+>>>>>>> 4035e4b5ee13924c384058c8f3c7f47f5ce266a6
 #root {
   height: 100%;
 }
 
-/* Login Page Wrapper */
 .login-page {
   height: 100%;
   display: flex;
@@ -10,7 +21,6 @@
   justify-content: center;
 }
 
-/* Login Box */
 .login-container {
   background-color: #3d4e3b;
   padding: 40px;
@@ -20,7 +30,6 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 
-/* Header styles */
 .login-header {
   text-align: center;
   margin-bottom: 30px;
@@ -33,11 +42,10 @@
 }
 
 .login-subtitle {
-  color: #000000;
+  color: #000;
   font-size: 1rem;
 }
 
-/* Form */
 .login-form {
   display: flex;
   flex-direction: column;
@@ -48,7 +56,7 @@
 }
 
 .form-label {
-  color: #000000 !important;
+  color: #000;
   margin-bottom: 6px;
   display: block;
   font-weight: 500;
@@ -59,7 +67,7 @@
   padding: 12px 14px;
   border-radius: 8px;
   background-color: #4a5d48;
-  color: #000000;
+  color: #000;
   border: none;
   font-size: 1rem;
 }
@@ -73,7 +81,6 @@
   background-color: #000100;
 }
 
-/* Button */
 .login-button {
   margin-top: 10px;
   padding: 12px;
@@ -91,7 +98,6 @@
   background-color: #6a8e60;
 }
 
-/* Footer */
 .login-footer {
   text-align: center;
   margin-top: 20px;
@@ -108,11 +114,11 @@
   text-decoration: underline;
 }
 
-/* Password group container */
 .password-group {
   position: relative;
 }
 
+<<<<<<< HEAD
 .password-group input {
   padding-right: 44px;
 }
@@ -125,4 +131,17 @@
   color: #000;
   cursor: pointer;
   font-size: 1.2rem;
+=======
+.password-input-container {
+  position: relative;
+}
+
+.eye-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #000;
+>>>>>>> 4035e4b5ee13924c384058c8f3c7f47f5ce266a6
 }

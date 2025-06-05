@@ -1,7 +1,8 @@
 // src/services/authService.js
 import axios from "axios";
 
-const API_BASE = "http://localhost:8081";
+
+const API_URL = "http://localhost:8081";
 
 // === USER APIs ===
 export const userSignup = async (userData) => {
@@ -36,4 +37,19 @@ export const vendorLogin = async (loginData) => {
 
 export const adminLogin = async (loginData) => {
   return axios.post(`${API_BASE}/admins/login`, loginData);
+};
+
+
+
+//===Password APIs===
+export const requestOTP = (email) => {
+  return axios.post(`${API_URL}/users/forgot-password`, { email });
+};
+
+export const verifyOTP = (email, otp) => {
+  return axios.post(`${API_URL}/users/verify-otp`, { email, otp });
+};
+
+export const resetPassword = (email, newPassword) => {
+  return axios.post(`${API_URL}/users/reset-password`, { email, newPassword });
 };

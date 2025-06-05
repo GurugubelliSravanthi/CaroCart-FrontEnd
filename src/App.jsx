@@ -24,6 +24,13 @@ import AdminAddCategory from "./pages/admin/AdminAddCategory";
 import PrivateRoute from "./components/PrivateRoute";
 import HomePage from "./pages/home/HomePage";
 import AppNavbar from "./components/Navbar/AppNavbar";
+import UserCart from "./pages/user/UserCart";
+
+import ForgotPasswordFlow from "./pages/user/ForgotPasswordFlow";
+import ForgotPassword from "./pages/user/ForgotPassword";
+import VerifyOTP from "./pages/user/VerifyOtp";
+import ResetPassword from "./pages/user/ResetPassword";
+
 
 // Optional future admin pages
 // import AdminAnalytics from "./pages/admin/AdminAnalytics";
@@ -34,6 +41,13 @@ function App() {
     <Router>
       <AppNavbar />
       <Routes>
+
+        <Route path="/forgot-password" element={<ForgotPasswordFlow />}>
+          <Route index element={<ForgotPassword />} />
+          <Route path="verify-otp" element={<VerifyOTP />} />
+          <Route path="reset-password" element={<ResetPassword />} />
+        </Route>
+
         {/* Public routes */}
         <Route path="/" element={<HomePage />} />
         <Route path="/signup" element={<UserSignup />} />
@@ -104,14 +118,41 @@ function App() {
               <AdminDashboard />
             </PrivateRoute>
           }
-        >
-          <Route path="vendors/pending" element={<AdminVendorApproval />} />
-          <Route path="products" element={<AdminProductManagement />} />
-          <Route path="products/add" element={<AdminAddProduct />} />
-          <Route path="categories/add" element={<AdminAddCategory />} />
-          {/* <Route path="orders" element={<AdminOrderManagement />} /> */}
-          {/* <Route path="analytics" element={<AdminAnalytics />} /> */}
-        </Route>
+        />
+        <Route
+          path="/admins/vendors/pending"
+          element={
+            <PrivateRoute role="ADMIN">
+              <AdminVendorApproval />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admins/products"
+          element={
+            <PrivateRoute role="ADMIN">
+              <AdminProductManagement />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/admins/categories/add"
+          element={
+            <PrivateRoute role="ADMIN">
+              <AdminAddCategory />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/admins/products/add"
+          element={
+            <PrivateRoute role="ADMIN">
+              <AdminAddProduct />
+            </PrivateRoute>
+          }
+        />
       </Routes>
     </Router>
   );
