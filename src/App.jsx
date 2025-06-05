@@ -1,12 +1,13 @@
 // src/App.jsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import UserSignup from "./pages/user/UserSignup";
-import UserLogin from "./pages/user/UserLogin";
-import UserDashBoard from "./pages/user/UserDashBoard";
-import UserProfile from "./pages/user/UserProfile";
-import ProductList from "./pages/user/ProductList";
-import UserCart from "./pages/user/UserCart";
+import HomePage from "./pages/home/HomePage";
+import NotFound from "./pages/common/NotFound";
+import UserSignup from "./pages/user/UserSignUp/UserSignup";
+import UserLogin from "./pages/user/UserLogin/UserLogin";
+import UserDashBoard from "./pages/user/UserDashboard/UserDashBoard";
+import UserProfile from "./pages/user/UserProfile/UserProfile";
+import UserCart from "./pages/user/UserCart/UserCart";
 
 import VendorSignupOtpRequest from "./pages/vendor/VendorSignupOtpRequest";
 import VendorSignupOtpVerify from "./pages/vendor/VendorSignupOtpVerify";
@@ -22,14 +23,12 @@ import AdminAddProduct from "./pages/admin/AdminAddProduct";
 import AdminAddCategory from "./pages/admin/AdminAddCategory";
 
 import PrivateRoute from "./components/PrivateRoute";
-import HomePage from "./pages/home/HomePage";
 import AppNavbar from "./components/Navbar/AppNavbar";
 
-import ForgotPasswordFlow from "./pages/user/ForgotPasswordFlow";
-import ForgotPassword from "./pages/user/ForgotPassword";
-import VerifyOTP from "./pages/user/VerifyOtp";
-import ResetPassword from "./pages/user/ResetPassword";
-
+import ForgotPasswordFlow from "./pages/user/ForgotPassword/ForgotPasswordFlow";
+import ForgotPassword from "./pages/user/ForgotPassword/ForgotPassword";
+import ResetPassword from "./pages/user/ResetPassword/ResetPassword";
+import VerifyOTP from "./pages/user/ForgotPassword/VerifyOTP";
 
 // Optional future admin pages
 // import AdminAnalytics from "./pages/admin/AdminAnalytics";
@@ -40,7 +39,6 @@ function App() {
     <Router>
       <AppNavbar />
       <Routes>
-
         <Route path="/forgot-password" element={<ForgotPasswordFlow />}>
           <Route index element={<ForgotPassword />} />
           <Route path="verify-otp" element={<VerifyOTP />} />
@@ -67,14 +65,6 @@ function App() {
           element={
             <PrivateRoute>
               <UserProfile />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/products"
-          element={
-            <PrivateRoute>
-              <ProductList />
             </PrivateRoute>
           }
         />
@@ -125,6 +115,9 @@ function App() {
           {/* <Route path="orders" element={<AdminOrderManagement />} /> */}
           {/* <Route path="analytics" element={<AdminAnalytics />} /> */}
         </Route>
+
+        {/* 404 fallback route */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );

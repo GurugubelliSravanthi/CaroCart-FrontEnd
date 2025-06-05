@@ -1,6 +1,6 @@
 // src/pages/UserSignup.jsx
 import React, { useState } from "react";
-import { userSignup } from "../../services/authService";
+import { userSignup } from "../../../services/authService";
 import { useNavigate, Link } from "react-router-dom";
 import { FaUser, FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import "./UserSignup.css";
