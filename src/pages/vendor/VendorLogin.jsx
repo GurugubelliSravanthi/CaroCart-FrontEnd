@@ -1,5 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+
+// Decode JWT to extract payload
+function parseJwt(token) {
+  try {
+    const base64Payload = token.split(".")[1];
+    const payload = atob(base64Payload.replace(/-/g, "+").replace(/_/g, "/"));
+    return JSON.parse(payload);
+  } catch (e) {
+    return null;
+  }
+}
 
 const VendorLogin = () => {
   const [email, setEmail] = useState("");
@@ -7,15 +18,23 @@ const VendorLogin = () => {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
+  // ✅ Redirect if already logged in as VENDOR
+  useEffect(() => {
+    const token = localStorage.getItem("carocart_token");
+    if (token) {
+      const user = parseJwt(token);
+      if (user?.role === "VENDOR") {
+        navigate("/vendors/dashboard");
+      }
+    }
+  }, [navigate]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
 
     try {
-      // Construct URLSearchParams for query string
       const params = new URLSearchParams({ email, password });
-
-      // POST request with no body, email & password as query params
       const res = await fetch(
         `http://localhost:8081/vendors/login?${params.toString()}`,
         {
@@ -32,12 +51,22 @@ const VendorLogin = () => {
         }
         return;
       }
-      
 
       const token = await res.text();
       localStorage.setItem("carocart_token", token);
+
+      const vendor = parseJwt(token);
+      if (vendor) {
+        localStorage.setItem("role", vendor.role || "VENDOR");
+        localStorage.setItem(
+          "user",
+          JSON.stringify({ email: vendor.sub, role: vendor.role })
+        );
+      }
+
+      window.dispatchEvent(new Event("carocart-login"));
       alert("Login successful!");
-      navigate("/vendors/dashboard"); // Adjust this path to your actual dashboard route
+      navigate("/vendors/dashboard");
     } catch (error) {
       setMessage("An error occurred: " + error.message);
     }
