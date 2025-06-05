@@ -81,6 +81,37 @@
     transform: translateY(0);
   }
   
+
+  .password-wrapper {
+  position: relative;
+}
+
+.password-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input {
+  width: 100%;
+  padding-right: 2.5rem; /* spacing for icon */
+}
+
+.eye-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #7f8c8d;
+  transition: color 0.3s ease;
+}
+
+
+.eye-icon:hover {
+  color: #2c3e50;
+}
+
   /* Responsive adjustments */
   @media (max-width: 480px) {
     .login-container {
