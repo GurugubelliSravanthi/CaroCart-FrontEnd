@@ -24,7 +24,6 @@ import AdminAddCategory from "./pages/admin/AdminAddCategory";
 import PrivateRoute from "./components/PrivateRoute";
 import HomePage from "./pages/home/HomePage";
 import AppNavbar from "./components/Navbar/AppNavbar";
-import UserCart from "./pages/user/UserCart";
 
 import ForgotPasswordFlow from "./pages/user/ForgotPasswordFlow";
 import ForgotPassword from "./pages/user/ForgotPassword";
