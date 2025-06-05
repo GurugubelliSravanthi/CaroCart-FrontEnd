@@ -33,8 +33,12 @@ const AppNavbar = () => {
         return;
       }
 
-      if (decoded.firstName && decoded.lastName) {
-        setUserName(`${decoded.firstName} ${decoded.lastName}`);
+      // if (decoded.firstName && decoded.lastName) {
+      //   setUserName(`${decoded.firstName} ${decoded.lastName}`);
+      // }
+
+      if (decoded.firstName) {
+        setUserName(decoded.firstName);
       } else if (decoded.sub) {
         setUserName(decoded.sub);
       } else {

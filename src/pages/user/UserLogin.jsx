@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 import "./UserLogin.css";
+import { FaOpencart } from "react-icons/fa6";
+
 
 // JWT decode
 function parseJwt(token) {
@@ -13,7 +16,6 @@ function parseJwt(token) {
   }
 }
 
-// Eye icon component
 const EyeIcon = ({ onClick, visible }) => (
   <svg
     onClick={onClick}
@@ -25,16 +27,17 @@ const EyeIcon = ({ onClick, visible }) => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
-    className="eye-icon"
+    style={{ cursor: "pointer" }}
     viewBox="0 0 24 24"
     aria-label={visible ? "Hide password" : "Show password"}
+    role="button"
   >
     {visible ? (
       <>
-        <path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a17.28 17.28 0 0 1 4.88-5.68" />
-        <path d="M3 3l18 18" />
-        <path d="M9.5 9.5a3 3 0 0 1 4.24 4.24" />
-        <path d="M14.5 14.5a3 3 0 0 1-4.24-4.24" />
+        <path d="M17.94 17.94A10.93 10.93 0 0112 19c-7 0-10-7-10-7a17.56 17.56 0 014.61-5.46" />
+        <path d="M1 1l22 22" />
+        <path d="M9.53 9.53a3 3 0 004.24 4.24" />
+        <path d="M14.12 14.12A3 3 0 019.88 9.88" />
       </>
     ) : (
       <>
@@ -86,7 +89,9 @@ const UserLogin = () => {
       <div className="login-container">
         <div className="login-header">
           <h2 className="login-title">Welcome Back</h2>
-          <p className="login-subtitle">Please enter your credentials to login</p>
+          <p className="login-subtitle">
+            Please enter your credentials to login
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="login-form">
@@ -104,15 +109,15 @@ const UserLogin = () => {
 
           <div className="form-group password-group">
             <label className="form-label">Password</label>
-            <div className="password-input-container">
-              <input
-                type={showPassword ? "text" : "password"}
-                className="form-input password-input"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
-              />
+            <input
+              type={showPassword ? "text" : "password"}
+              className="form-input"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+            />
+            <div className="eye-icon">
               <EyeIcon onClick={() => setShowPassword(!showPassword)} visible={showPassword} />
             </div>
           </div>
