@@ -26,11 +26,24 @@ import HomePage from "./pages/home/HomePage";
 import AppNavbar from "./components/Navbar/AppNavbar";
 import UserCart from "./pages/user/UserCart";
 
+import ForgotPasswordFlow from "./pages/user/ForgotPasswordFlow";
+import ForgotPassword from "./pages/user/ForgotPassword";
+import VerifyOTP from "./pages/user/VerifyOtp";
+import ResetPassword from "./pages/user/ResetPassword";
+
+
 function App() {
   return (
     <Router>
       <AppNavbar />
       <Routes>
+
+        <Route path="/forgot-password" element={<ForgotPasswordFlow />}>
+          <Route index element={<ForgotPassword />} />
+          <Route path="verify-otp" element={<VerifyOTP />} />
+          <Route path="reset-password" element={<ResetPassword />} />
+        </Route>
+
         {/* Public routes */}
         <Route path="/" element={<HomePage />} />
         {/* User routes */}
@@ -134,6 +147,7 @@ function App() {
             </PrivateRoute>
           }
         />
+
       </Routes>
     </Router>
   );

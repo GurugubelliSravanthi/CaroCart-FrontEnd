@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./UserLogin.css";
 
-// JWT decode (basic)
+// JWT decode
 function parseJwt(token) {
   try {
     const base64Payload = token.split(".")[1];
@@ -13,6 +13,7 @@ function parseJwt(token) {
   }
 }
 
+// Eye icon component
 const EyeIcon = ({ onClick, visible }) => (
   <svg
     onClick={onClick}
@@ -24,17 +25,16 @@ const EyeIcon = ({ onClick, visible }) => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
-    style={{ cursor: "pointer" }}
+    className="eye-icon"
     viewBox="0 0 24 24"
     aria-label={visible ? "Hide password" : "Show password"}
-    role="button"
   >
     {visible ? (
       <>
-        <path d="M17.94 17.94A10.93 10.93 0 0112 19c-7 0-10-7-10-7a17.56 17.56 0 014.61-5.46" />
-        <path d="M1 1l22 22" />
-        <path d="M9.53 9.53a3 3 0 004.24 4.24" />
-        <path d="M14.12 14.12A3 3 0 019.88 9.88" />
+        <path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a17.28 17.28 0 0 1 4.88-5.68" />
+        <path d="M3 3l18 18" />
+        <path d="M9.5 9.5a3 3 0 0 1 4.24 4.24" />
+        <path d="M14.5 14.5a3 3 0 0 1-4.24-4.24" />
       </>
     ) : (
       <>
@@ -53,13 +53,10 @@ const UserLogin = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const res = await fetch("http://localhost:8081/users/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
 
@@ -71,20 +68,11 @@ const UserLogin = () => {
 
       const token = await res.text();
       localStorage.setItem("carocart_token", token);
-
       const user = parseJwt(token);
-      if (user) {
-        localStorage.setItem(
-          "user",
-          JSON.stringify({
-            email: user.sub,
-            role: user.role,
-          })
-        );
-      } else {
-        localStorage.setItem("user", JSON.stringify({ email: "", role: "" }));
-      }
-
+      localStorage.setItem(
+        "user",
+        JSON.stringify(user ? { email: user.sub, role: user.role } : { email: "", role: "" })
+      );
       window.dispatchEvent(new Event("carocart-login"));
       alert("Login successful!");
       navigate("/dashboard");
@@ -116,29 +104,29 @@ const UserLogin = () => {
 
           <div className="form-group password-group">
             <label className="form-label">Password</label>
-            <input
-              type={showPassword ? "text" : "password"}
-              className="form-input"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
-            />
-            <div className="eye-icon">
+            <div className="password-input-container">
+              <input
+                type={showPassword ? "text" : "password"}
+                className="form-input password-input"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+              />
               <EyeIcon onClick={() => setShowPassword(!showPassword)} visible={showPassword} />
             </div>
           </div>
 
-          <button type="submit" className="login-button">
-            Sign In
-          </button>
+          <p>
+  Forgot your password? <Link to="/forgot-password">Reset it here</Link>
+</p>
+
+          <button type="submit" className="login-button">Sign In</button>
         </form>
 
         <div className="login-footer">
           Don't have an account?{" "}
-          <Link to="/signup" className="login-link">
-            Register here
-          </Link>
+          <Link to="/signup" className="login-link">Register here</Link>
         </div>
       </div>
     </div>
