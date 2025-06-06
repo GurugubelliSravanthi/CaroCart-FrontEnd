@@ -1,6 +1,6 @@
 // src/pages/user/ResetPassword.js
 import React, { useState } from "react";
-import { resetPassword } from "../../services/authService";
+import { resetPassword } from "../../../services/authService";
 import { useNavigate } from "react-router-dom";
 
 const ResetPassword = ({ emailOrPhone }) => {

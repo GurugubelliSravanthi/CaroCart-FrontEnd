@@ -53,7 +53,7 @@ const AdminProductManagement = () => {
   };
 
   const handleEdit = (product) => {
-    navigate("/admins/products/add", { state: { product } });
+    navigate("/admins/dashboard/products/add", { state: { product } });
   };
 
   return (
@@ -63,7 +63,7 @@ const AdminProductManagement = () => {
           <h2>Product Management</h2>
         </Col>
         <Col className="text-end">
-          <Button onClick={() => navigate("/admins/products/add")}>
+          <Button onClick={() => navigate("/admins/dashboard/products/add")}>
             + Add Product
           </Button>
         </Col>

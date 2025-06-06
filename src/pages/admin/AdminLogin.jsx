@@ -1,7 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { adminLogin } from "../../services/authService";
 import "./AdminLogin.css";
+
+// Decode JWT to extract role
+function parseJwt(token) {
+  try {
+    const base64Payload = token.split(".")[1];
+    const payload = atob(base64Payload.replace(/-/g, "+").replace(/_/g, "/"));
+    return JSON.parse(payload);
+  } catch (e) {
+    return null;
+  }
+}
 
 const AdminLogin = () => {
   const navigate = useNavigate();
@@ -9,6 +20,17 @@ const AdminLogin = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [visible, setVisible] = useState(false); // 👁 Toggle state
+
+  // ✅ Redirect if already logged in as ADMIN
+  useEffect(() => {
+    const token = localStorage.getItem("carocart_token");
+    if (token) {
+      const user = parseJwt(token);
+      if (user?.role === "ADMIN") {
+        navigate("/admins/dashboard");
+      }
+    }
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,7 +46,9 @@ const AdminLogin = () => {
         setError("Login failed: No token received");
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed: Invalid credentials");
+      setError(
+        err.response?.data?.message || "Login failed: Invalid credentials"
+      );
     }
   };
 

@@ -1,11 +1,13 @@
-// src/App
+// src/App.jsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import UserSignup from "./pages/user/UserSignup";
-import UserLogin from "./pages/user/UserLogin";
-import UserDashBoard from "./pages/user/UserDashBoard";
-import UserProfile from "./pages/user/UserProfile";
-import ProductList from "./pages/user/ProductList";
+import HomePage from "./pages/home/HomePage";
+import NotFound from "./pages/common/NotFound";
+import UserSignup from "./pages/user/UserSignUp/UserSignup";
+import UserLogin from "./pages/user/UserLogin/UserLogin";
+import UserDashBoard from "./pages/user/UserDashboard/UserDashBoard";
+import UserProfile from "./pages/user/UserProfile/UserProfile";
+import UserCart from "./pages/user/UserCart/UserCart";
 
 import VendorSignupOtpRequest from "./pages/vendor/VendorSignupOtpRequest";
 import VendorSignupOtpVerify from "./pages/vendor/VendorSignupOtpVerify";
@@ -14,30 +16,29 @@ import VendorDashboard from "./pages/vendor/VendorDashboard";
 import VendorProfile from "./pages/vendor/VendorProfile";
 
 import AdminLogin from "./pages/admin/AdminLogin";
-import AdminDashboard from "./pages/admin/AdminDashboard"; 
+import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminProductManagement from "./pages/admin/AdminProductManagement";
 import AdminVendorApproval from "./pages/admin/AdminVendorApproval";
 import AdminAddProduct from "./pages/admin/AdminAddProduct";
 import AdminAddCategory from "./pages/admin/AdminAddCategory";
 
-
 import PrivateRoute from "./components/PrivateRoute";
-import HomePage from "./pages/home/HomePage";
 import AppNavbar from "./components/Navbar/AppNavbar";
-import UserCart from "./pages/user/UserCart";
 
-import ForgotPasswordFlow from "./pages/user/ForgotPasswordFlow";
-import ForgotPassword from "./pages/user/ForgotPassword";
-import VerifyOTP from "./pages/user/VerifyOtp";
-import ResetPassword from "./pages/user/ResetPassword";
+import ForgotPasswordFlow from "./pages/user/ForgotPassword/ForgotPasswordFlow";
+import ForgotPassword from "./pages/user/ForgotPassword/ForgotPassword";
+import ResetPassword from "./pages/user/ResetPassword/ResetPassword";
+import VerifyOTP from "./pages/user/ForgotPassword/VerifyOTP";
 
+// Optional future admin pages
+// import AdminAnalytics from "./pages/admin/AdminAnalytics";
+// import AdminOrderManagement from "./pages/admin/AdminOrderManagement";
 
 function App() {
   return (
     <Router>
       <AppNavbar />
       <Routes>
-
         <Route path="/forgot-password" element={<ForgotPasswordFlow />}>
           <Route index element={<ForgotPassword />} />
           <Route path="verify-otp" element={<VerifyOTP />} />
@@ -46,11 +47,11 @@ function App() {
 
         {/* Public routes */}
         <Route path="/" element={<HomePage />} />
-        {/* User routes */}
         <Route path="/signup" element={<UserSignup />} />
         <Route path="/login" element={<UserLogin />} />
         <Route path="/user/cart" element={<UserCart />} />
 
+        {/* User routes */}
         <Route
           path="/dashboard"
           element={
@@ -64,14 +65,6 @@ function App() {
           element={
             <PrivateRoute>
               <UserProfile />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/products"
-          element={
-            <PrivateRoute>
-              <ProductList />
             </PrivateRoute>
           }
         />
@@ -103,8 +96,10 @@ function App() {
           }
         />
 
-        {/* Admin routes */}
+        {/* Admin login (separate from dashboard layout) */}
         <Route path="/admins/login" element={<AdminLogin />} />
+
+        {/* Admin dashboard with nested routes */}
         <Route
           path="/admins/dashboard"
           element={
@@ -112,42 +107,17 @@ function App() {
               <AdminDashboard />
             </PrivateRoute>
           }
-        />
-        <Route
-          path="/admins/vendors/pending"
-          element={
-            <PrivateRoute role="ADMIN">
-              <AdminVendorApproval />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/admins/products"
-          element={
-            <PrivateRoute role="ADMIN">
-              <AdminProductManagement />
-            </PrivateRoute>
-          }
-        />
+        >
+          <Route path="vendors/pending" element={<AdminVendorApproval />} />
+          <Route path="products" element={<AdminProductManagement />} />
+          <Route path="products/add" element={<AdminAddProduct />} />
+          <Route path="categories/add" element={<AdminAddCategory />} />
+          {/* <Route path="orders" element={<AdminOrderManagement />} /> */}
+          {/* <Route path="analytics" element={<AdminAnalytics />} /> */}
+        </Route>
 
-        <Route
-          path="/admins/categories/add"
-          element={
-            <PrivateRoute role="ADMIN">
-              <AdminAddCategory />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/admins/products/add"
-          element={
-            <PrivateRoute role="ADMIN">
-              <AdminAddProduct />
-            </PrivateRoute>
-          }
-        />
-
+        {/* 404 fallback route */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );

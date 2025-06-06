@@ -1,6 +1,6 @@
 // src/pages/UserSignup.jsx
-import React, { useState } from "react";
-import { userSignup } from "../../services/authService";
+import React, { useState, useEffect } from "react"; // Added useEffect
+import { userSignup } from "../../../services/authService";
 import { useNavigate, Link } from "react-router-dom";
 import { FaUser, FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import "./UserSignup.css";
@@ -16,6 +16,15 @@ const UserSignup = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+
+  // ** Redirect logged-in users away from signup page **
+  useEffect(() => {
+    const token = localStorage.getItem("carocart_token");
+    if (token) {
+      // If logged in, redirect to home or dashboard
+      navigate("/"); // or "/dashboard" or "/user/dashboard" as per your routing
+    }
+  }, [navigate]);
 
   const handleChange = (e) => {
     setFormData((prev) => ({

@@ -1,6 +1,6 @@
 // src/pages/user/ForgotPassword.js
 import React, { useState } from "react";
-import { requestOTP } from "../../services/authService";
+import { requestOTP } from "../../../services/authService";
 import "./ForgotPassword.css";
 
 const ForgotPassword = ({ onSuccess }) => {

@@ -2,7 +2,7 @@
 import axios from "axios";
 
 
-const API_URL = "http://localhost:8081";
+const API_BASE = "http://localhost:8081";
 
 // === USER APIs ===
 export const userSignup = async (userData) => {
@@ -11,6 +11,19 @@ export const userSignup = async (userData) => {
 
 export const userLogin = async (loginData) => {
   return axios.post(`${API_BASE}/users/login`, loginData);
+};
+
+//===Password APIs===
+export const requestOTP = (email) => {
+  return axios.post(`${API_BASE}/users/forgot-password`, { email });
+};
+
+export const verifyOTP = (email, otp) => {
+  return axios.post(`${API_BASE}/users/verify-otp`, { email, otp });
+};
+
+export const resetPassword = (email, newPassword) => {
+  return axios.post(`${API_BASE}/users/reset-password`, { email, newPassword });
 };
 
 // === VENDOR APIs ===
@@ -39,17 +52,3 @@ export const adminLogin = async (loginData) => {
   return axios.post(`${API_BASE}/admins/login`, loginData);
 };
 
-
-
-//===Password APIs===
-export const requestOTP = (email) => {
-  return axios.post(`${API_URL}/users/forgot-password`, { email });
-};
-
-export const verifyOTP = (email, otp) => {
-  return axios.post(`${API_URL}/users/verify-otp`, { email, otp });
-};
-
-export const resetPassword = (email, newPassword) => {
-  return axios.post(`${API_URL}/users/reset-password`, { email, newPassword });
-};
