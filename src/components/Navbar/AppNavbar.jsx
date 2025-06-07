@@ -235,7 +235,7 @@ const AppNavbar = () => {
 
                     <NavDropdown.Item
                       as={Link}
-                      to="/user/orders"
+                      to="/orders/my"
                       className="dropdown-item-custom"
                     >
                       <div className="dropdown-icon">
