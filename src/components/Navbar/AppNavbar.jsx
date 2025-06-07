@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Navbar, Nav, Container, Button, NavDropdown } from "react-bootstrap";
+import {
+  Navbar,
+  Nav,
+  Container,
+  Button,
+  NavDropdown,
+  Badge,
+} from "react-bootstrap";
 import { useNavigate, Link } from "react-router-dom";
 import { FaShoppingCart } from "react-icons/fa"; // cart icon
-import axios from "axios";
 import "./AppNavbar.css";
 
 function parseJwt(token) {
@@ -17,6 +23,8 @@ function parseJwt(token) {
 const AppNavbar = () => {
   const navigate = useNavigate();
   const [userName, setUserName] = useState(null);
+  const [userRole, setUserRole] = useState(null);
+  const [cartCount, setCartCount] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
   const [profileImageUrl, setProfileImageUrl] = useState(null);
 
@@ -25,7 +33,6 @@ const AppNavbar = () => {
       const token = localStorage.getItem("carocart_token");
       if (!token) {
         setUserName(null);
-        setProfileImageUrl(null);
         return;
       }
 
@@ -33,7 +40,6 @@ const AppNavbar = () => {
       if (!decoded || !decoded.exp || decoded.exp * 1000 < Date.now()) {
         localStorage.removeItem("carocart_token");
         setUserName(null);
-        setProfileImageUrl(null);
         return;
       }
 
@@ -43,11 +49,6 @@ const AppNavbar = () => {
         setUserName(decoded.sub);
       } else {
         setUserName(null);
-      }
-
-      // Load profile image when user is logged in
-      if (decoded.firstName || decoded.sub) {
-        loadProfileImage(token);
       }
     };
 
@@ -61,32 +62,6 @@ const AppNavbar = () => {
       window.removeEventListener("carocart-logout", updateUserName);
     };
   }, []);
-
-  const loadProfileImage = async (token) => {
-    try {
-      const response = await axios.get("http://localhost:8081/users/profile/image", {
-        headers: { Authorization: `Bearer ${token}` },
-        responseType: 'blob'
-      });
-      
-      const imageBlob = new Blob([response.data]);
-      const imageObjectURL = URL.createObjectURL(imageBlob);
-      setProfileImageUrl(imageObjectURL);
-    } catch (err) {
-      console.log("No profile image found or error loading image:", err.response?.status);
-      // Don't show error for 404 (no image found) - this is normal
-      setProfileImageUrl(null);
-    }
-  };
-
-  // Cleanup blob URL when component unmounts or image changes
-  useEffect(() => {
-    return () => {
-      if (profileImageUrl) {
-        URL.revokeObjectURL(profileImageUrl);
-      }
-    };
-  }, [profileImageUrl]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -114,7 +89,6 @@ const AppNavbar = () => {
 
     localStorage.removeItem("carocart_token");
     setUserName(null);
-    setProfileImageUrl(null);
     window.dispatchEvent(new Event("carocart-logout"));
 
     if (role === "ADMIN") {
@@ -158,15 +132,25 @@ const AppNavbar = () => {
 
         <Navbar.Collapse id="carocart-navbar-nav">
           <Nav className="ms-auto align-items-center">
-            {userName && (
+            {userName && userRole === "USER" && (
               <Nav.Link
                 as={Link}
                 to="/user/cart"
-                className="me-3"
+                className="me-3 position-relative"
                 title="My Cart"
                 style={{ fontSize: "1.3rem", color: "white" }}
               >
                 <FaShoppingCart />
+                {cartCount > 0 && (
+                  <Badge
+                    pill
+                    bg="danger"
+                    className="position-absolute top-0 start-100 translate-middle"
+                    style={{ fontSize: "0.7rem" }}
+                  >
+                    {cartCount}
+                  </Badge>
+                )}
               </Nav.Link>
             )}
 
@@ -201,22 +185,50 @@ const AppNavbar = () => {
                 id="user-nav-dropdown"
                 className="nav-dropdown-custom"
               >
+                {userRole === "USER" && (
+                  <>
+                    <NavDropdown.Item
+                      as={Link}
+                      to="/user/cart"
+                      className="dropdown-item-custom"
+                    >
+                      <div className="dropdown-icon">
+                        <FaShoppingCart />
+                      </div>
+                      <span>My Cart</span>
+                    </NavDropdown.Item>
+
+                    <NavDropdown.Item
+                      as={Link}
+                      to="/orders/my"
+                      className="dropdown-item-custom"
+                    >
+                      <div className="dropdown-icon">
+                        <FaClipboardList />
+                      </div>
+                      <span>My Orders</span>
+                    </NavDropdown.Item>
+                  </>
+                )}
+
                 <NavDropdown.Item
                   onClick={handleProfile}
                   className="dropdown-item-custom"
                 >
                   <div className="dropdown-icon">
-                    <i className="bi bi-person-fill"></i>
+                    <FaUser />
                   </div>
                   <span>Profile</span>
                 </NavDropdown.Item>
+
                 <NavDropdown.Divider className="dropdown-divider-custom" />
+
                 <NavDropdown.Item
                   onClick={handleLogout}
                   className="dropdown-item-custom logout-item"
                 >
                   <div className="dropdown-icon">
-                    <i className="bi bi-box-arrow-right"></i>
+                    <FaSignOutAlt />
                   </div>
                   <span>Logout</span>
                 </NavDropdown.Item>

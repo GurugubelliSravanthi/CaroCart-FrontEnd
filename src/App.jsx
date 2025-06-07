@@ -29,6 +29,8 @@ import ForgotPasswordFlow from "./pages/user/ForgotPassword/ForgotPasswordFlow";
 import ForgotPassword from "./pages/user/ForgotPassword/ForgotPassword";
 import ResetPassword from "./pages/user/ResetPassword/ResetPassword";
 import VerifyOTP from "./pages/user/ForgotPassword/VerifyOTP";
+import Checkout from "./pages/user/CheckOut/Checkout";
+import MyOrders from "./pages/user/MyOrders/MyOrders";
 
 // Optional future admin pages
 // import AdminAnalytics from "./pages/admin/AdminAnalytics";
@@ -50,6 +52,7 @@ function App() {
         <Route path="/signup" element={<UserSignup />} />
         <Route path="/login" element={<UserLogin />} />
         <Route path="/user/cart" element={<UserCart />} />
+        <Route path="/checkout" element={<Checkout />} />
 
         {/* User routes */}
         <Route
@@ -65,6 +68,15 @@ function App() {
           element={
             <PrivateRoute>
               <UserProfile />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/orders/my"
+          element={
+            <PrivateRoute>
+              <MyOrders />
             </PrivateRoute>
           }
         />
