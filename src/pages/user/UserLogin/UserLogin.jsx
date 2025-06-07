@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./UserLogin.css";
 
@@ -56,9 +56,10 @@ const UserLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loginError, setLoginError] = useState("");
   const navigate = useNavigate();
+  const formRef = useRef(null);
 
-  // ✅ Redirect if already logged in as USER
   useEffect(() => {
     const role = getUserRoleFromToken();
     if (role === "USER") {
@@ -68,6 +69,8 @@ const UserLogin = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoginError("");
+
     try {
       const res = await fetch("http://localhost:8081/users/login", {
         method: "POST",
@@ -76,8 +79,7 @@ const UserLogin = () => {
       });
 
       if (!res.ok) {
-        const errorMsg = await res.text();
-        alert("Login failed: " + errorMsg);
+        setLoginError("Email or password is incorrect.");
         return;
       }
 
@@ -91,10 +93,15 @@ const UserLogin = () => {
         )
       );
       window.dispatchEvent(new Event("carocart-login"));
-      alert("Login successful!");
+
+      // ✅ Submit hidden native form to prompt Chrome to save password
+      setTimeout(() => {
+        if (formRef.current) formRef.current.submit();
+      }, 200);
+
       navigate("/");
     } catch (error) {
-      alert("An error occurred: " + error.message);
+      setLoginError("An error occurred. Please try again.");
     }
   };
 
@@ -108,13 +115,35 @@ const UserLogin = () => {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="login-form">
+        {/* ✅ Error Message */}
+        {loginError && (
+          <div className="login-error" style={{ color: "red", marginBottom: "10px" }}>
+            {loginError}
+          </div>
+        )}
+
+        {/* ✅ Hidden native form for Chrome password manager */}
+        <form
+          ref={formRef}
+          action="/dummy-login"
+          method="POST"
+          style={{ display: "none" }}
+        >
+          <input name="email" type="email" value={email} readOnly />
+          <input name="password" type="password" value={password} readOnly />
+          <button type="submit">Submit</button>
+        </form>
+
+        {/* ✅ Visible React login form */}
+        <form onSubmit={handleSubmit} className="login-form" autoComplete="on">
           <div className="form-group">
             <label className="form-label">Email Address</label>
             <input
               type="email"
               className="form-input"
               required
+              name="email"
+              autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
@@ -127,6 +156,8 @@ const UserLogin = () => {
               type={showPassword ? "text" : "password"}
               className="form-input"
               required
+              name="password"
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
