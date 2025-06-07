@@ -1,15 +1,5 @@
-<<<<<<< HEAD
-=======
-body,
-html {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #586f55 0%, #4a5d48 50%, #3d4e3b 100%);
-}
 
->>>>>>> 4035e4b5ee13924c384058c8f3c7f47f5ce266a6
+
 #root {
   height: 100%;
 }
@@ -67,13 +57,13 @@ html {
   padding: 12px 14px;
   border-radius: 8px;
   background-color: #4a5d48;
-  color: #000;
+  color: #000 !important;
   border: none;
   font-size: 1rem;
 }
 
 .form-input::placeholder {
-  color: #00000068;
+  color: #00000068 !important;
 }
 
 .form-input:focus {
@@ -118,7 +108,6 @@ html {
   position: relative;
 }
 
-<<<<<<< HEAD
 .password-group input {
   padding-right: 44px;
 }
@@ -131,7 +120,8 @@ html {
   color: #000;
   cursor: pointer;
   font-size: 1.2rem;
-=======
+}
+
 .password-input-container {
   position: relative;
 }
@@ -143,5 +133,4 @@ html {
   transform: translateY(-50%);
   cursor: pointer;
   color: #000;
->>>>>>> 4035e4b5ee13924c384058c8f3c7f47f5ce266a6
 }
