@@ -1,14 +1,15 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8084/orders"; // your OrderService backend base URL
+const API_URL = "http://localhost:8084/orders";
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem("carocart_token");
-  if (token) {
-    return { Authorization: `Bearer ${token}` };
-  }
-  return {};
+  return token ? { Authorization: `Bearer ${token}` } : {};
 };
+
+// ===========================
+// USER APIs
+// ===========================
 
 const placeOrder = async (orderRequest) => {
   const headers = getAuthHeaders();
@@ -24,6 +25,12 @@ const getMyOrders = async () => {
   return response.data;
 };
 
+const getMyOrderById = async (orderId) => {
+  const headers = getAuthHeaders();
+  const response = await axios.get(`${API_URL}/${orderId}`, { headers });
+  return response.data;
+};
+
 const cancelOrder = async (orderId) => {
   const headers = getAuthHeaders();
   const response = await axios.delete(`${API_URL}/cancel/${orderId}`, {
@@ -32,9 +39,60 @@ const cancelOrder = async (orderId) => {
   return response.data;
 };
 
-export default {
-  placeOrder,
-  getMyOrders,
-  cancelOrder, // ✅ export it
+// ===========================
+// ADMIN APIs
+// ===========================
+
+const getAllOrders = async () => {
+  const headers = getAuthHeaders();
+  const response = await axios.get(`${API_URL}/admin/orders`, { headers });
+  return response.data;
 };
 
+const getOrderByIdForAdmin = async (orderId) => {
+  const headers = getAuthHeaders();
+  const response = await axios.get(`${API_URL}/admin/orders/${orderId}`, {
+    headers,
+  });
+  return response.data;
+};
+
+const cancelOrderByAdmin = async (orderId) => {
+  const headers = getAuthHeaders();
+  const response = await axios.put(
+    `${API_URL}/admin/orders/${orderId}/cancel`,
+    {},
+    { headers }
+  );
+  return response.data;
+};
+
+// ===========================
+// DEBUG (optional)
+// ===========================
+
+const debugToken = async () => {
+  const headers = getAuthHeaders();
+  const response = await axios.get(`${API_URL}/debug/token`, { headers });
+  return response.data;
+};
+
+// ===========================
+// Export all
+// ===========================
+
+export default {
+  // user
+  placeOrder,
+  getMyOrders,
+  getMyOrderById,
+  cancelOrder,
+
+  // admin
+  getAllOrders,
+  getOrderByIdForAdmin,
+  cancelOrderByAdmin,
+
+  // debug
+  debugToken,
+};

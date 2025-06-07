@@ -32,9 +32,8 @@ import VerifyOTP from "./pages/user/ForgotPassword/VerifyOTP";
 import Checkout from "./pages/user/CheckOut/Checkout";
 import MyOrders from "./pages/user/MyOrders/MyOrders";
 
-// Optional future admin pages
 // import AdminAnalytics from "./pages/admin/AdminAnalytics";
-// import AdminOrderManagement from "./pages/admin/AdminOrderManagement";
+import AdminOrderManagement from "./pages/admin/AdminOrderManagement";
 
 function App() {
   return (
@@ -124,7 +123,7 @@ function App() {
           <Route path="products" element={<AdminProductManagement />} />
           <Route path="products/add" element={<AdminAddProduct />} />
           <Route path="categories/add" element={<AdminAddCategory />} />
-          {/* <Route path="orders" element={<AdminOrderManagement />} /> */}
+          <Route path="orders" element={<AdminOrderManagement />} />
           {/* <Route path="analytics" element={<AdminAnalytics />} /> */}
         </Route>
 
