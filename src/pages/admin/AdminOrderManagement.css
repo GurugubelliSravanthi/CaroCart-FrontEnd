@@ -1,0 +1,35 @@
+.admin-order-container {
+    padding: 20px;
+    background-color: #f9f9f9;
+  }
+  
+  .admin-order-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .admin-order-table th,
+  .admin-order-table td {
+    border: 1px solid #ccc;
+    padding: 8px 10px;
+    text-align: left;
+  }
+  
+  .admin-order-table th {
+    background-color: #333;
+    color: #fff;
+  }
+  
+  .cancel-btn {
+    background-color: crimson;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .cancelled-label {
+    color: red;
+    font-weight: bold;
+  }
+  
