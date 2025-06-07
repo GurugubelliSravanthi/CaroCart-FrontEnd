@@ -1,7 +1,8 @@
 // src/pages/user/ForgotPasswordFlow.js
 import React, { useState } from "react";
 import ForgotPassword from "./ForgotPassword";
-
+import VerifyOTP from "./VerifyOTP";
+import ResetPassword from "../ResetPassword/ResetPassword";
 const ForgotPasswordFlow = () => {
   const [emailOrPhone, setEmailOrPhone] = useState("");
   const [step, setStep] = useState(1);
