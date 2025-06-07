@@ -14,7 +14,6 @@ import {
   FaClipboardList,
   FaSignOutAlt,
 } from "react-icons/fa";
-import axios from "axios";
 import cartService from "../../services/cartService";
 import "./AppNavbar.css";
 
@@ -33,7 +32,6 @@ const AppNavbar = () => {
   const [userRole, setUserRole] = useState(null);
   const [cartCount, setCartCount] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [profileImageUrl, setProfileImageUrl] = useState(null);
 
   useEffect(() => {
     const updateUserName = () => {
@@ -42,7 +40,6 @@ const AppNavbar = () => {
         setUserName(null);
         setUserRole(null);
         setCartCount(0);
-        setProfileImageUrl(null);
         return;
       }
 
@@ -52,15 +49,13 @@ const AppNavbar = () => {
         setUserName(null);
         setUserRole(null);
         setCartCount(0);
-        setProfileImageUrl(null);
         return;
       }
 
-      setUserName(decoded.firstName || decoded.sub || null);
-
-      // Load profile image
-      if (decoded.firstName || decoded.sub) {
-        loadProfileImage(token);
+      if (decoded.firstName) {
+        setUserName(decoded.firstName);
+      } else if (decoded.sub) {
+        setUserName(decoded.sub);
       }
 
       const role =
@@ -68,6 +63,7 @@ const AppNavbar = () => {
         decoded?.roles?.[0] ||
         decoded?.authorities?.[0]?.authority ||
         null;
+
       setUserRole(role);
     };
 
@@ -75,29 +71,12 @@ const AppNavbar = () => {
 
     window.addEventListener("carocart-login", updateUserName);
     window.addEventListener("carocart-logout", updateUserName);
-    window.addEventListener("carocart-profile-updated", updateUserName);
 
     return () => {
       window.removeEventListener("carocart-login", updateUserName);
       window.removeEventListener("carocart-logout", updateUserName);
-      window.removeEventListener("carocart-profile-updated", updateUserName);
     };
   }, []);
-
-  const loadProfileImage = async (token) => {
-    try {
-      const response = await axios.get("http://localhost:8081/users/profile/image", {
-        headers: { Authorization: `Bearer ${token}` },
-        responseType: "blob",
-      });
-      const imageBlob = new Blob([response.data]);
-      const imageObjectURL = URL.createObjectURL(imageBlob);
-      setProfileImageUrl(imageObjectURL);
-    } catch (err) {
-      console.log("No profile image found or error loading image:", err.response?.status);
-      setProfileImageUrl(null);
-    }
-  };
 
   useEffect(() => {
     const fetchCartCount = async () => {
@@ -130,6 +109,7 @@ const AppNavbar = () => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -153,16 +133,21 @@ const AppNavbar = () => {
     setUserName(null);
     setUserRole(null);
     setCartCount(0);
-    setProfileImageUrl(null);
     window.dispatchEvent(new Event("carocart-logout"));
 
-    navigate(role === "ADMIN" ? "/admins/login" : "/login");
+    if (role === "ADMIN") {
+      navigate("/admins/login");
+    } else {
+      navigate("/login");
+    }
   };
 
   const handleProfile = () => navigate("/profile");
 
   return (
     <Navbar
+      bg=""
+      variant=""
       expand="lg"
       sticky="top"
       className={`navbar-military ${isScrolled ? "navbar-scrolled" : ""}`}
@@ -227,23 +212,13 @@ const AppNavbar = () => {
                 title={
                   <div className="user-dropdown-title">
                     <div className="user-avatar">
-                      {profileImageUrl ? (
-                        <img
-                          src={profileImageUrl}
-                          alt="Profile"
-                          className="user-avatar-image"
-                          onError={() => setProfileImageUrl(null)}
-                        />
-                      ) : (
-                        userName.charAt(0).toUpperCase()
-                      )}
+                      {userName.charAt(0).toUpperCase()}
                     </div>
                     <span className="user-name">{userName}</span>
                   </div>
                 }
                 id="user-nav-dropdown"
                 className="nav-dropdown-custom"
-                align="end"
               >
                 {userRole === "USER" && (
                   <>
