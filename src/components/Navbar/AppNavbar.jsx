@@ -1,7 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Navbar, Nav, Container, Button, NavDropdown } from "react-bootstrap";
+import {
+  Navbar,
+  Nav,
+  Container,
+  Button,
+  NavDropdown,
+  Badge,
+} from "react-bootstrap";
 import { useNavigate, Link } from "react-router-dom";
-import { FaShoppingCart } from "react-icons/fa"; // cart icon
+import {
+  FaShoppingCart,
+  FaUser,
+  FaClipboardList,
+  FaSignOutAlt,
+} from "react-icons/fa";
+import cartService from "../../services/cartService";
 import "./AppNavbar.css";
 
 function parseJwt(token) {
@@ -16,6 +29,8 @@ function parseJwt(token) {
 const AppNavbar = () => {
   const navigate = useNavigate();
   const [userName, setUserName] = useState(null);
+  const [userRole, setUserRole] = useState(null);
+  const [cartCount, setCartCount] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -23,6 +38,8 @@ const AppNavbar = () => {
       const token = localStorage.getItem("carocart_token");
       if (!token) {
         setUserName(null);
+        setUserRole(null);
+        setCartCount(0);
         return;
       }
 
@@ -30,20 +47,24 @@ const AppNavbar = () => {
       if (!decoded || !decoded.exp || decoded.exp * 1000 < Date.now()) {
         localStorage.removeItem("carocart_token");
         setUserName(null);
+        setUserRole(null);
+        setCartCount(0);
         return;
       }
-
-      // if (decoded.firstName && decoded.lastName) {
-      //   setUserName(`${decoded.firstName} ${decoded.lastName}`);
-      // }
 
       if (decoded.firstName) {
         setUserName(decoded.firstName);
       } else if (decoded.sub) {
         setUserName(decoded.sub);
-      } else {
-        setUserName(null);
       }
+
+      const role =
+        decoded?.role ||
+        decoded?.roles?.[0] ||
+        decoded?.authorities?.[0]?.authority ||
+        null;
+
+      setUserRole(role);
     };
 
     updateUserName();
@@ -56,6 +77,33 @@ const AppNavbar = () => {
       window.removeEventListener("carocart-logout", updateUserName);
     };
   }, []);
+
+  useEffect(() => {
+    const fetchCartCount = async () => {
+      try {
+        const token = localStorage.getItem("carocart_token");
+        if (!token || userRole !== "USER") {
+          setCartCount(0);
+          return;
+        }
+        const cartItems = await cartService.getCartItems();
+        const totalQuantity = cartItems.reduce(
+          (sum, item) => sum + (item.quantity || 0),
+          0
+        );
+        setCartCount(totalQuantity);
+      } catch (error) {
+        console.error("Error fetching cart count", error);
+      }
+    };
+
+    fetchCartCount();
+    window.addEventListener("carocart-cart-updated", fetchCartCount);
+
+    return () => {
+      window.removeEventListener("carocart-cart-updated", fetchCartCount);
+    };
+  }, [userRole]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -83,6 +131,8 @@ const AppNavbar = () => {
 
     localStorage.removeItem("carocart_token");
     setUserName(null);
+    setUserRole(null);
+    setCartCount(0);
     window.dispatchEvent(new Event("carocart-logout"));
 
     if (role === "ADMIN") {
@@ -126,15 +176,25 @@ const AppNavbar = () => {
 
         <Navbar.Collapse id="carocart-navbar-nav">
           <Nav className="ms-auto align-items-center">
-            {userName && (
+            {userName && userRole === "USER" && (
               <Nav.Link
                 as={Link}
                 to="/user/cart"
-                className="me-3"
+                className="me-3 position-relative"
                 title="My Cart"
                 style={{ fontSize: "1.3rem", color: "white" }}
               >
                 <FaShoppingCart />
+                {cartCount > 0 && (
+                  <Badge
+                    pill
+                    bg="danger"
+                    className="position-absolute top-0 start-100 translate-middle"
+                    style={{ fontSize: "0.7rem" }}
+                  >
+                    {cartCount}
+                  </Badge>
+                )}
               </Nav.Link>
             )}
 
@@ -160,22 +220,50 @@ const AppNavbar = () => {
                 id="user-nav-dropdown"
                 className="nav-dropdown-custom"
               >
+                {userRole === "USER" && (
+                  <>
+                    <NavDropdown.Item
+                      as={Link}
+                      to="/user/cart"
+                      className="dropdown-item-custom"
+                    >
+                      <div className="dropdown-icon">
+                        <FaShoppingCart />
+                      </div>
+                      <span>My Cart</span>
+                    </NavDropdown.Item>
+
+                    <NavDropdown.Item
+                      as={Link}
+                      to="/user/orders"
+                      className="dropdown-item-custom"
+                    >
+                      <div className="dropdown-icon">
+                        <FaClipboardList />
+                      </div>
+                      <span>My Orders</span>
+                    </NavDropdown.Item>
+                  </>
+                )}
+
                 <NavDropdown.Item
                   onClick={handleProfile}
                   className="dropdown-item-custom"
                 >
                   <div className="dropdown-icon">
-                    <i className="bi bi-person-fill"></i>
+                    <FaUser />
                   </div>
                   <span>Profile</span>
                 </NavDropdown.Item>
+
                 <NavDropdown.Divider className="dropdown-divider-custom" />
+
                 <NavDropdown.Item
                   onClick={handleLogout}
                   className="dropdown-item-custom logout-item"
                 >
                   <div className="dropdown-icon">
-                    <i className="bi bi-box-arrow-right"></i>
+                    <FaSignOutAlt />
                   </div>
                   <span>Logout</span>
                 </NavDropdown.Item>

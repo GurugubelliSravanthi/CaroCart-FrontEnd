@@ -24,8 +24,17 @@ const getMyOrders = async () => {
   return response.data;
 };
 
-// export all
+const cancelOrder = async (orderId) => {
+  const headers = getAuthHeaders();
+  const response = await axios.delete(`${API_URL}/cancel/${orderId}`, {
+    headers,
+  });
+  return response.data;
+};
+
 export default {
   placeOrder,
   getMyOrders,
+  cancelOrder, // ✅ export it
 };
+

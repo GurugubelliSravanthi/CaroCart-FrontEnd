@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import orderService from "../../../services/orderService";
 import { useNavigate } from "react-router-dom";
-import { FaBoxOpen, FaSpinner } from "react-icons/fa";
+import { FaBoxOpen, FaSpinner, FaTimesCircle } from "react-icons/fa";
 import "./MyOrders.css";
 
 const MyOrders = () => {
@@ -42,6 +42,24 @@ const MyOrders = () => {
         return "badge badge-shipped";
       default:
         return "badge";
+    }
+  };
+
+  const handleCancelOrder = async (orderId) => {
+    const confirm = window.confirm(
+      "Are you sure you want to cancel this order?"
+    );
+    if (!confirm) return;
+
+    try {
+      await orderService.cancelOrder(orderId);
+      alert("Order cancelled successfully.");
+      // Refresh the orders list
+      const updatedOrders = await orderService.getMyOrders();
+      setOrders(updatedOrders);
+    } catch (err) {
+      console.error("Failed to cancel order", err);
+      alert("Failed to cancel the order.");
     }
   };
 
@@ -104,6 +122,16 @@ const MyOrders = () => {
                     {order.status}
                   </span>
                 </p>
+
+                {order.status === "PLACED" && (
+                  <button
+                    className="cancel-order-btn"
+                    onClick={() => handleCancelOrder(order.orderId)}
+                  >
+                    <FaTimesCircle style={{ marginRight: "6px" }} />
+                    Cancel Order
+                  </button>
+                )}
               </div>
             </div>
           ))}
