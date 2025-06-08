@@ -17,6 +17,8 @@ import {
 import axios from "axios";
 import cartService from "../../services/cartService";
 import "./AppNavbar.css";
+// import caro from "./Caro_cart.png"; // Keep this only once, near the top
+
 
 function parseJwt(token) {
   try {
@@ -168,17 +170,29 @@ const AppNavbar = () => {
       className={`navbar-military ${isScrolled ? "navbar-scrolled" : ""}`}
     >
       <Container>
-        <Navbar.Brand
-          onClick={() => navigate("/")}
-          className="navbar-brand-custom"
-          style={{ cursor: "pointer" }}
-        >
-          <div className="navbar-logo-container">
-            <span className="navbar-logo">🛒</span>
-            <div className="navbar-logo-glow"></div>
-          </div>
-          <span className="navbar-brand-text">CaroCart</span>
-        </Navbar.Brand>
+      <Navbar.Brand
+  onClick={() => navigate("/")}
+  className="navbar-brand-custom"
+  style={{ cursor: "pointer" }}
+>
+  <div className="navbar-logo-container" style={{ width: "40px", height: "40px" }}>
+    <img
+      src="/v.png"  // direct path from public folder
+      alt="My Profile"
+      style={{
+        width: "100%",
+        height: "100%",
+        borderRadius: "50%",
+        objectFit: "cover",
+      }}
+    />
+    <div className="navbar-logo-glow"></div>
+  </div>
+  <span className="navbar-brand-text">CaroCart</span>
+</Navbar.Brand>
+
+
+
 
         <Navbar.Toggle
           aria-controls="carocart-navbar-nav"

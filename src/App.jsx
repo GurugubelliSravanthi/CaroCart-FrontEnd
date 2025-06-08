@@ -21,6 +21,8 @@ import AdminProductManagement from "./pages/admin/AdminProductManagement";
 import AdminVendorApproval from "./pages/admin/AdminVendorApproval";
 import AdminAddProduct from "./pages/admin/AdminAddProduct";
 import AdminAddCategory from "./pages/admin/AdminAddCategory";
+import AdminOrderManagement from "./pages/admin/AdminOrderManagement";
+import AdminManageUsers from "./pages/admin/AdminManageUsers"; // ✅ newly added
 
 import PrivateRoute from "./components/PrivateRoute";
 import AppNavbar from "./components/Navbar/AppNavbar";
@@ -32,14 +34,12 @@ import VerifyOTP from "./pages/user/ForgotPassword/VerifyOTP";
 import Checkout from "./pages/user/CheckOut/Checkout";
 import MyOrders from "./pages/user/MyOrders/MyOrders";
 
-// import AdminAnalytics from "./pages/admin/AdminAnalytics";
-import AdminOrderManagement from "./pages/admin/AdminOrderManagement";
-
 function App() {
   return (
     <Router>
       <AppNavbar />
       <Routes>
+        {/* Forgot Password */}
         <Route path="/forgot-password" element={<ForgotPasswordFlow />}>
           <Route index element={<ForgotPassword />} />
           <Route path="verify-otp" element={<VerifyOTP />} />
@@ -70,7 +70,6 @@ function App() {
             </PrivateRoute>
           }
         />
-
         <Route
           path="/orders/my"
           element={
@@ -107,10 +106,10 @@ function App() {
           }
         />
 
-        {/* Admin login (separate from dashboard layout) */}
+        {/* Admin login */}
         <Route path="/admins/login" element={<AdminLogin />} />
 
-        {/* Admin dashboard with nested routes */}
+        {/* Admin dashboard */}
         <Route
           path="/admins/dashboard"
           element={
@@ -124,10 +123,10 @@ function App() {
           <Route path="products/add" element={<AdminAddProduct />} />
           <Route path="categories/add" element={<AdminAddCategory />} />
           <Route path="orders" element={<AdminOrderManagement />} />
-          {/* <Route path="analytics" element={<AdminAnalytics />} /> */}
+          <Route path="users" element={<AdminManageUsers />} /> {/* ✅ NEW */}
         </Route>
 
-        {/* 404 fallback route */}
+        {/* 404 fallback */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
