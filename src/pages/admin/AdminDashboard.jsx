@@ -1,21 +1,31 @@
 import React from "react";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
+import {
+  FaUserCheck,
+  FaBoxOpen,
+  FaPlusSquare,
+  FaTags,
+  FaClipboardList,
+  FaChartBar,
+  FaUsers, // 👈 Icon for Manage Users
+} from "react-icons/fa";
 import "./AdminDashboard.css";
 
 const AdminDashboard = () => {
   const menuItems = [
-    { title: "Approve Vendors", path: "vendors/pending" },
-    { title: "Manage Products", path: "products" },
-    { title: "Add Product", path: "products/add" },
-    { title: "Manage Categories", path: "categories/add" },
-    { title: "Order Management", path: "orders" },
-    { title: "Analytics", path: "analytics" },
+    { title: "Approve Vendors", path: "vendors/pending", icon: <FaUserCheck /> },
+    { title: "Manage Products", path: "products", icon: <FaBoxOpen /> },
+    { title: "Add Product", path: "products/add", icon: <FaPlusSquare /> },
+    { title: "Manage Categories", path: "categories/add", icon: <FaTags /> },
+    { title: "Order Management", path: "orders", icon: <FaClipboardList /> },
+    { title: "Manage Users", path: "users", icon: <FaUsers /> }, // ✅ Newly Added
+    { title: "Analytics", path: "analytics", icon: <FaChartBar /> },
   ];
 
   return (
     <div className="admin-dashboard-container">
       <aside className="admin-sidebar">
-        <h4 className="sidebar-title">Admin Panel</h4>
+        <h2 className="sidebar-title">⚙️ Admin Dashboard</h2>
         <ul className="sidebar-menu">
           {menuItems.map((item, index) => (
             <li key={index}>
@@ -25,7 +35,8 @@ const AdminDashboard = () => {
                   isActive ? "sidebar-link active" : "sidebar-link"
                 }
               >
-                {item.title}
+                <span className="icon">{item.icon}</span>
+                <span className="text">{item.title}</span>
               </NavLink>
             </li>
           ))}

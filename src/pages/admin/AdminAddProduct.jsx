@@ -6,7 +6,7 @@ import {
   getSubCategoriesByCategoryId,
 } from "../../services/categoryService";
 import { getToken } from "../../utils/auth";
-import "./AdminProductForm.css";
+import "./AdminAddProduct.css";
 
 const AdminAddProduct = () => {
   const location = useLocation();
@@ -83,7 +83,21 @@ const AdminAddProduct = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setForm({ ...form, [name]: type === "checkbox" ? checked : value });
+    let updatedForm = {
+      ...form,
+      [name]: type === "checkbox" ? checked : value,
+    };
+
+    if ((name === "price" || name === "mrp") && updatedForm.price && updatedForm.mrp) {
+      const mrp = parseFloat(updatedForm.mrp);
+      const price = parseFloat(updatedForm.price);
+      if (mrp > 0 && price >= 0) {
+        const discount = ((mrp - price) / mrp) * 100;
+        updatedForm.discount = discount.toFixed(2);
+      }
+    }
+
+    setForm(updatedForm);
   };
 
   const handleImageChange = (e) => {
@@ -266,16 +280,16 @@ const AdminAddProduct = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="discount">Discount (%)</label>
+            <label>Discount (%)</label>
             <input
-              type="number"
-              id="discount"
-              name="discount"
+              type="text"
               value={form.discount}
-              onChange={handleChange}
-              required
-              min="0"
-              max="100"
+              readOnly
+              style={{
+                backgroundColor: "#f1f1f1",
+                fontWeight: "bold",
+                border: "1px solid #ccc",
+              }}
             />
           </div>
         </div>

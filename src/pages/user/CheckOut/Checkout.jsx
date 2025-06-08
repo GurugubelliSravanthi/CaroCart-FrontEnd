@@ -3,12 +3,14 @@ import cartService from "../../../services/cartService";
 import orderService from "../../../services/orderService";
 import { useNavigate } from "react-router-dom";
 import { FiShoppingCart, FiLoader } from "react-icons/fi";
+import './Checkout.css';
 
 const Checkout = () => {
   const [cartItems, setCartItems] = useState([]);
   const [shippingAddress, setShippingAddress] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(""); // ✅ New state
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -44,6 +46,7 @@ const Checkout = () => {
 
     setLoading(true);
     setError(null);
+    setSuccessMessage(""); // reset
 
     const orderRequest = {
       shippingAddress,
@@ -55,10 +58,9 @@ const Checkout = () => {
 
     try {
       await orderService.placeOrder(orderRequest);
-      alert("Order placed successfully!");
-      // Clear cart on frontend too
+      setSuccessMessage("Order Placed ✅"); // ✅ Show top message
       await cartService.clearCart();
-      navigate("/orders/my");
+      setTimeout(() => navigate("/orders/my"), 1500); // Redirect after short delay
     } catch (err) {
       console.error("Order placement failed", err);
       setError("Failed to place order. Please try again.");
@@ -67,16 +69,20 @@ const Checkout = () => {
     }
   };
 
-  if (error) {
-    return <div className="error">{error}</div>;
-  }
-
-  if (cartItems.length === 0) {
-    return <div>Loading cart...</div>;
-  }
-
   return (
     <div className="checkout-container">
+      {/* ✅ Top message */}
+      {successMessage && (
+        <div className="success-message" style={{ color: "green", marginBottom: "1rem" }}>
+          {successMessage}
+        </div>
+      )}
+      {error && (
+        <div className="error-message" style={{ color: "red", marginBottom: "1rem" }}>
+          {error}
+        </div>
+      )}
+
       <h2>
         <FiShoppingCart /> Checkout
       </h2>
