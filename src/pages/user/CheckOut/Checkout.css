@@ -1,0 +1,142 @@
+/* Checkout.css */
+.checkout-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  background-color: #fff;
+  padding: 2rem 2.5rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #222;
+}
+
+.checkout-container h2 {
+  display: flex;
+  align-items: center;
+  font-size: 1.8rem;
+  color: #232f3e;
+  margin-bottom: 1.5rem;
+}
+
+.checkout-container h2 svg {
+  margin-right: 0.5rem;
+  color: #ff9900;
+}
+
+.order-summary {
+  border: 1px solid #e2e8f0;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  background-color: #f9fafb;
+}
+
+.order-summary h3 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #374151;
+}
+
+.order-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
+  font-size: 1rem;
+}
+
+.order-total {
+  border-top: 1px solid #ddd;
+  padding-top: 1rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #1a202c;
+}
+
+.shipping-address {
+  margin-bottom: 1.5rem;
+}
+
+.shipping-address label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.shipping-address textarea {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 6px;
+  border: 1px solid #cbd5e0;
+  font-size: 1rem;
+  resize: vertical;
+  transition: border 0.3s ease;
+}
+
+.shipping-address textarea:focus {
+  border-color: #ff9900;
+  outline: none;
+}
+
+.place-order-btn {
+  background-color: #ff9900;
+  border: none;
+  color: #fff;
+  padding: 0.75rem 1.8rem;
+  font-size: 1.05rem;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.place-order-btn:hover {
+  background-color: #e88a00;
+  transform: translateY(-1px);
+}
+
+.place-order-btn:disabled {
+  background-color: #e2e8f0;
+  color: #888;
+  cursor: not-allowed;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+  font-size: 1.3rem;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.success-message,
+.error-message {
+  font-weight: 600;
+  text-align: center;
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.success-message {
+  background-color: #d1fae5;
+  color: #065f46;
+  border: 1px solid #10b981;
+}
+
+.error-message {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #f87171;
+}

@@ -11,6 +11,7 @@ import {
   Row,
   Col,
 } from "react-bootstrap";
+import { FaEdit, FaTrashAlt, FaPlus } from "react-icons/fa";
 import "./AdminProductManagement.css";
 
 const API_BASE = "http://localhost:8082/products";
@@ -58,13 +59,17 @@ const AdminProductManagement = () => {
 
   return (
     <Container fluid>
-      <Row className="mb-4">
+      <Row className="mb-4 align-items-center">
         <Col>
           <h2>Product Management</h2>
         </Col>
         <Col className="text-end">
-          <Button onClick={() => navigate("/admins/dashboard/products/add")}>
-            + Add Product
+          <Button
+            onClick={() => navigate("/admins/dashboard/products/add")}
+            variant="primary"
+          >
+            <FaPlus className="me-2" />
+            Add Product
           </Button>
         </Col>
       </Row>
@@ -79,7 +84,7 @@ const AdminProductManagement = () => {
       ) : (
         <Card>
           <Card.Body>
-            <Table responsive hover>
+            <Table responsive hover className="align-middle">
               <thead>
                 <tr>
                   <th>Name</th>
@@ -99,15 +104,20 @@ const AdminProductManagement = () => {
                     <td>{p.stock}</td>
                     <td>{p.subCategory?.name}</td>
                     <td>
-                      <Button size="sm" onClick={() => handleEdit(p)}>
-                        Edit
-                      </Button>{" "}
+                      <Button
+                        size="sm"
+                        variant="primary"
+                        className="me-2"
+                        onClick={() => handleEdit(p)}
+                      >
+                        <FaEdit className="me-1" /> Edit
+                      </Button>
                       <Button
                         size="sm"
                         variant="danger"
                         onClick={() => handleDelete(p.id)}
                       >
-                        Delete
+                        <FaTrashAlt className="me-1" /> Delete
                       </Button>
                     </td>
                   </tr>

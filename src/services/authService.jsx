@@ -2,50 +2,36 @@ import axios from "axios";
 
 const API_BASE = "http://localhost:8081";
 
-// === USER APIs ===
+// ==========================
+// ======== USER APIs =======
+// ==========================
+
+// User Signup
 export const userSignup = async (userData) => {
-  // POST /users/signup expects user data in body
   return axios.post(`${API_BASE}/users/signup`, userData);
 };
 
+// User Login - returns JWT token as plain text
 export const userLogin = async (loginData) => {
-  // POST /users/login expects { email, password } in body
   return axios.post(`${API_BASE}/users/login`, loginData);
 };
 
-// === Password APIs ===
-export const requestOTP = (email) => {
-  // POST /users/forgot-password with { email } in body
-  return axios.post(`${API_BASE}/users/forgot-password`, { email });
-};
-
-export const verifyOTP = (email, otp) => {
-  // POST /users/verify-otp with { email, otp } in body
-  return axios.post(`${API_BASE}/users/verify-otp`, { email, otp });
-};
-
-export const resetPassword = (email, newPassword) => {
-  // POST /users/reset-password with { email, newPassword } in body
-  return axios.post(`${API_BASE}/users/reset-password`, { email, newPassword });
-};
-
-// === PROFILE APIs ===
+// Get User Profile
 export const getUserProfile = (token) => {
-  // GET /users/profile requires Authorization header with Bearer token
   return axios.get(`${API_BASE}/users/profile`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
 
+// Update User Profile
 export const updateUserProfile = (token, updatedUser) => {
-  // PUT /users/profile requires Authorization header and updated user JSON body
   return axios.put(`${API_BASE}/users/profile`, updatedUser, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
 
+// Upload Profile Image
 export const uploadProfileImage = (token, file) => {
-  // POST /users/profile/upload-image expects multipart/form-data with Authorization header
   const formData = new FormData();
   formData.append("profileImage", file);
 
@@ -57,37 +43,80 @@ export const uploadProfileImage = (token, file) => {
   });
 };
 
+// Get Profile Image
 export const getProfileImage = (token) => {
-  // GET /users/profile/image returns the image bytes with Authorization header
   return axios.get(`${API_BASE}/users/profile/image`, {
     headers: { Authorization: `Bearer ${token}` },
     responseType: "blob",
   });
 };
 
-// === VENDOR APIs ===
-// Note: Vendor signup is a 2-step process (request OTP, verify OTP)
-export const vendorRequestSignupOtp = async (vendorData) => {
-  return axios.post(`${API_BASE}/vendors/signup/request-otp`, vendorData);
+// Request OTP for Forgot Password
+export const requestOTP = (email) => {
+  return axios.post(`${API_BASE}/users/forgot-password`, { email });
 };
 
-export const vendorVerifySignupOtp = async (email, otp) => {
-  // Your backend expects email and otp as query params for vendor verify OTP
-  return axios.post(`${API_BASE}/vendors/signup/verify-otp`, null, {
-    params: { email, otp },
+// Verify OTP
+export const verifyOTP = (email, otp) => {
+  return axios.post(`${API_BASE}/users/verify-otp`, { email, otp });
+};
+
+// Reset Password after OTP Verification
+export const resetPassword = (email, newPassword) => {
+  return axios.post(`${API_BASE}/users/reset-password`, { email, newPassword });
+};
+
+// Get Minimal User Info (for other services)
+export const getCurrentUserDTO = (token) => {
+  return axios.get(`${API_BASE}/users/me`, {
+    headers: { Authorization: `Bearer ${token}` },
   });
 };
 
-export const vendorLogin = async (loginData) => {
-  // Backend expects email and password as query params for vendor login
-  const { email, password } = loginData;
-  return axios.post(`${API_BASE}/vendors/login`, null, {
-    params: { email, password },
+// ============================
+// ======== ADMIN APIs ========
+// ============================
+
+// Admin: Get all users
+export const getAllUsers = (token) => {
+  return axios.get(`${API_BASE}/users/admin/users/all`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 };
 
-// === ADMIN APIs ===
-export const adminLogin = async (loginData) => {
-  // POST /admins/login with loginData in body
+// Admin: Update user by ID
+export const updateUserByAdmin = (userId, updatedUser, token) => {
+  return axios.put(`${API_BASE}/users/admin/users/${userId}`, updatedUser, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+// Admin: Delete user by ID
+export const deleteUserByAdmin = (userId, token) => {
+  return axios.delete(`${API_BASE}/users/admin/users/${userId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+// Admin Signup
+export const adminSignup = (adminData) => {
+  return axios.post(`${API_BASE}/admins/signup`, adminData);
+};
+
+// Admin Login - returns JWT + role
+export const adminLogin = (loginData) => {
   return axios.post(`${API_BASE}/admins/login`, loginData);
+};
+
+// Get current admin details
+export const getCurrentAdmin = (token) => {
+  return axios.get(`${API_BASE}/admins/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
 };
