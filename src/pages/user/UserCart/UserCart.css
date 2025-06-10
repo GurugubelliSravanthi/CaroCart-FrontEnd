@@ -47,7 +47,7 @@
 }
 
 .continue-shopping-btn {
-  background-color: #4a6bff;
+  background-color: #4b644a;
   color: white;
   border: none;
   padding: 0.8rem 1.5rem;
@@ -58,7 +58,7 @@
 }
 
 .continue-shopping-btn:hover {
-  background-color: #3a56d4;
+  background-color: #3d593e;
 }
 
 .cart-content {
@@ -153,7 +153,7 @@
 
 .product-details p {
   margin: 0;
-  color: #4a6bff;
+  color: #506e51;
   font-weight: 600;
 }
 
@@ -266,7 +266,7 @@
 
 .checkout-btn {
   width: 100%;
-  background-color: #4a6bff;
+  background-color: #4a674b;
   color: white;
   border: none;
   padding: 1rem;
@@ -283,7 +283,7 @@
 }
 
 .checkout-btn:hover {
-  background-color: #3a56d4;
+  background-color: #476c52;
 }
 
 .spinner {

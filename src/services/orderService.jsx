@@ -58,6 +58,11 @@ const getOrderByIdForAdmin = async (orderId) => {
 };
 
 const cancelOrderByAdmin = async (orderId) => {
+  if (!orderId) {
+    console.error("cancelOrderByAdmin called with invalid orderId");
+    throw new Error("Invalid orderId");
+  }
+
   const headers = getAuthHeaders();
   const response = await axios.put(
     `${API_URL}/admin/orders/${orderId}/cancel`,
@@ -66,6 +71,7 @@ const cancelOrderByAdmin = async (orderId) => {
   );
   return response.data;
 };
+
 
 // ===========================
 // DEBUG (optional)
