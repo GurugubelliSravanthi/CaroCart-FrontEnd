@@ -25,11 +25,18 @@ const AdminOrderManagement = () => {
   }, []);
 
   const handleCancel = async (orderId) => {
+    if (!orderId || typeof orderId !== "number") {
+      console.error("❌ Invalid or missing orderId:", orderId);
+      alert("Invalid Order ID. Cannot cancel.");
+      return;
+    }
+
     try {
       await orderService.cancelOrderByAdmin(orderId);
-      fetchOrders();
+      fetchOrders(); // refresh list
     } catch (error) {
-      console.error("Cancel failed:", error);
+      console.error("❌ Cancel failed:", error);
+      alert("Failed to cancel order.");
     }
   };
 
@@ -53,11 +60,11 @@ const AdminOrderManagement = () => {
       ) : (
         <div className="d-grid gap-4">
           {orders.map((order) => (
-            <Card key={order.id} className="p-3 shadow-sm">
+            <Card key={order.orderId} className="p-3 shadow-sm">
               <div className="d-flex justify-content-between align-items-center">
                 <div>
                   <p>
-                    <strong>Order ID:</strong> {order.id}
+                    <strong>Order ID:</strong> {order.orderId}
                   </p>
                   <p>
                     <strong>User ID:</strong> {order.userId}
@@ -81,7 +88,7 @@ const AdminOrderManagement = () => {
                     order.status !== "CANCELLED BY ADMIN" && (
                       <Button
                         variant="danger"
-                        onClick={() => handleCancel(order.id)}
+                        onClick={() => handleCancel(order.orderId)}
                       >
                         Cancel
                       </Button>
@@ -96,7 +103,7 @@ const AdminOrderManagement = () => {
       {/* Modal for Order Details */}
       <Modal show={showModal} onHide={handleCloseModal} size="lg" centered>
         <Modal.Header closeButton>
-          <Modal.Title>Order #{selectedOrder?.id} Details</Modal.Title>
+          <Modal.Title>Order #{selectedOrder?.orderId} Details</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {selectedOrder ? (
@@ -114,7 +121,7 @@ const AdminOrderManagement = () => {
               <div>
                 <strong>Items:</strong>
                 <ul>
-                  {selectedOrder.orderItems.map((item, idx) => (
+                  {selectedOrder.orderItems?.map((item, idx) => (
                     <li key={idx}>
                       {item.productName} - Qty: {item.quantity} - ₹
                       {item.totalPrice}
