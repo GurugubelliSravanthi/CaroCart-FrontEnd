@@ -34,6 +34,10 @@ import VerifyOTP from "./pages/user/ForgotPassword/VerifyOTP";
 import Checkout from "./pages/user/CheckOut/Checkout";
 import MyOrders from "./pages/user/MyOrders/MyOrders";
 
+import Account from "./pages/user/Account/Account";
+import AdminProfile from "./pages/admin/Profile/AdminProfile";
+
+
 function App() {
   return (
     <Router>
@@ -45,6 +49,9 @@ function App() {
           <Route path="verify-otp" element={<VerifyOTP />} />
           <Route path="reset-password" element={<ResetPassword />} />
         </Route>
+
+<Route path="/account" element={<Account />} />
+<Route path="/admins/profile" element={<AdminProfile />} />
 
         {/* Public routes */}
         <Route path="/" element={<HomePage />} />
