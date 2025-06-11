@@ -1,0 +1,41 @@
+.dashboard-container {
+    max-width: 600px;
+    margin: auto;
+    padding: 40px 20px;
+    text-align: center;
+  }
+  
+  .dashboard-header {
+    font-size: 32px;
+    margin-bottom: 10px;
+  }
+  
+  .dashboard-subtitle {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 30px;
+  }
+  
+  .button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .dashboard-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .button-primary {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .button-logout {
+    background-color: #dc3545;
+    color: white;
+  }
+  
