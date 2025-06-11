@@ -1,126 +1,173 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import cartService from "../../../services/cartService";
-import orderService from "../../../services/orderService";
 import { useNavigate } from "react-router-dom";
-import { FiShoppingCart, FiLoader } from "react-icons/fi";
-import './Checkout.css';
+import "./Checkout.css";
 
 const Checkout = () => {
   const [cartItems, setCartItems] = useState([]);
-  const [shippingAddress, setShippingAddress] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(""); // ✅ New state
+  const [useDefaultAddress, setUseDefaultAddress] = useState(true);
+  const [address, setAddress] = useState({
+    firstName: "",
+    lastName: "",
+    address1: "",
+    address2: "",
+    zip: "",
+    city: "",
+    state: "",
+  });
+
   const navigate = useNavigate();
+
+  // Change this to your backend/public URL where images are stored
+  const imageBaseURL = "https://your-backend-url.com"; // Replace with your real base URL
 
   useEffect(() => {
     const fetchCart = async () => {
-      try {
-        const items = await cartService.getCartItems();
-        if (items.length === 0) {
-          alert("Your cart is empty. Please add items before checking out.");
-          navigate("/");
-          return;
-        }
-        setCartItems(items);
-      } catch (err) {
-        console.error("Error fetching cart items", err);
-        setError("Failed to load cart items.");
+      const items = await cartService.getCartItems();
+      if (items.length === 0) {
+        alert("Cart is empty.");
+        navigate("/");
+        return;
       }
+      setCartItems(items);
     };
-
     fetchCart();
   }, [navigate]);
 
-  const getTotalPrice = () => {
-    return cartItems
-      .reduce((sum, item) => sum + item.price * item.quantity, 0)
-      .toFixed(2);
+  const handleChange = (e) => {
+    setAddress({ ...address, [e.target.name]: e.target.value });
   };
 
-  const handlePlaceOrder = async () => {
-    if (!shippingAddress.trim()) {
-      alert("Please enter your shipping address.");
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-    setSuccessMessage(""); // reset
-
-    const orderRequest = {
-      shippingAddress,
-      items: cartItems.map((item) => ({
-        productId: item.productId,
-        quantity: item.quantity,
-      })),
-    };
-
-    try {
-      await orderService.placeOrder(orderRequest);
-      setSuccessMessage("Order Placed ✅"); // ✅ Show top message
-      await cartService.clearCart();
-      setTimeout(() => navigate("/orders/my"), 1500); // Redirect after short delay
-    } catch (err) {
-      console.error("Order placement failed", err);
-      setError("Failed to place order. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+  const handleContinue = () => {
+    // Add validation if needed
+    navigate("/checkout/payment");
   };
 
   return (
-    <div className="checkout-container">
-      {/* ✅ Top message */}
-      {successMessage && (
-        <div className="success-message" style={{ color: "green", marginBottom: "1rem" }}>
-          {successMessage}
-        </div>
-      )}
-      {error && (
-        <div className="error-message" style={{ color: "red", marginBottom: "1rem" }}>
-          {error}
-        </div>
-      )}
+    <div className="checkout-wrapper">
+      <div className="checkout-left">
+        <h2>Checkout</h2>
+        <div className="step-title">1. Shipping address</div>
 
-      <h2>
-        <FiShoppingCart /> Checkout
-      </h2>
+        <div className="address-options">
+          <label>
+            <input
+              type="radio"
+              checked={useDefaultAddress}
+              onChange={() => setUseDefaultAddress(true)}
+            />
+            Use default address
+          </label>
+          <label>
+            <input
+              type="radio"
+              checked={!useDefaultAddress}
+              onChange={() => setUseDefaultAddress(false)}
+            />
+            Add new address
+          </label>
+        </div>
 
-      <div className="order-summary">
-        <h3>Order Summary</h3>
-        {cartItems.map((item) => (
-          <div key={item.productId} className="order-item">
-            <span>
-              {item.productName} x {item.quantity}
-            </span>
-            <span>₹{(item.price * item.quantity).toFixed(2)}</span>
+        {!useDefaultAddress && (
+          <div className="address-form">
+            <div className="row">
+              <input
+                name="firstName"
+                placeholder="First Name"
+                value={address.firstName}
+                onChange={handleChange}
+              />
+              <input
+                name="lastName"
+                placeholder="Last Name"
+                value={address.lastName}
+                onChange={handleChange}
+              />
+            </div>
+            <input
+              name="address1"
+              placeholder="Address Line 1"
+              value={address.address1}
+              onChange={handleChange}
+            />
+            <input
+              name="address2"
+              placeholder="Address Line 2 (optional)"
+              value={address.address2}
+              onChange={handleChange}
+            />
+            <div className="row">
+              <input
+                name="zip"
+                placeholder="ZIP Code"
+                value={address.zip}
+                onChange={handleChange}
+              />
+              <input
+                name="city"
+                placeholder="City"
+                value={address.city}
+                onChange={handleChange}
+              />
+              <input
+                name="state"
+                placeholder="State"
+                value={address.state}
+                onChange={handleChange}
+              />
+            </div>
           </div>
-        ))}
-        <div className="order-total">
-          <strong>Total: ₹{getTotalPrice()}</strong>
+        )}
+
+        <button className="continue-btn" onClick={handleContinue}>
+          Continue to payment
+        </button>
+      </div>
+
+      <div className="checkout-right">
+        <h3>Summary</h3>
+        <input className="promo-input" placeholder="Enter promo code" />
+        <div className="summary-values">
+          <div>
+            Subtotal: ₹
+            {cartItems
+              .reduce((sum, item) => sum + item.price * item.quantity, 0)
+              .toFixed(2)}
+          </div>
+          <div>Shipping: FREE</div>
+          <div>
+            <strong>
+              Total: ₹
+              {cartItems
+                .reduce((sum, item) => sum + item.price * item.quantity, 0)
+                .toFixed(2)}
+            </strong>
+          </div>
         </div>
-      </div>
 
-      <div className="shipping-address">
-        <label htmlFor="shippingAddress">Shipping Address:</label>
-        <textarea
-          id="shippingAddress"
-          rows="4"
-          value={shippingAddress}
-          onChange={(e) => setShippingAddress(e.target.value)}
-          placeholder="Enter your shipping address"
-          disabled={loading}
-        />
+        <h4>🛒 Cart ({cartItems.length} items)</h4>
+        {cartItems.map((item) => {
+          console.log("Image URL:", item.image);
+          return (
+            <div key={item.productId} className="cart-item">
+              <img
+                src={
+                  item.image
+                    ? imageBaseURL + item.image // Add your base URL prefix here
+                    : "https://via.placeholder.com/60"
+                }
+                alt={item.productName}
+              />
+              <div className="cart-details">
+                <div>{item.productName}</div>
+                <div>
+                  ₹{item.price.toFixed(2)} x {item.quantity}
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
-
-      <button
-        onClick={handlePlaceOrder}
-        disabled={loading}
-        className="place-order-btn"
-      >
-        {loading ? <FiLoader className="spinner" /> : "Place Order"}
-      </button>
     </div>
   );
 };
