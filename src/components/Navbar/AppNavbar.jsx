@@ -4,21 +4,16 @@ import {
   Nav,
   Container,
   Button,
-  NavDropdown,
   Badge,
 } from "react-bootstrap";
 import { useNavigate, Link } from "react-router-dom";
 import {
   FaShoppingCart,
-  FaUser,
-  FaClipboardList,
   FaSignOutAlt,
 } from "react-icons/fa";
 import axios from "axios";
 import cartService from "../../services/cartService";
 import "./AppNavbar.css";
-// import caro from "./Caro_cart.png"; // Keep this only once, near the top
-
 
 function parseJwt(token) {
   try {
@@ -62,7 +57,7 @@ const AppNavbar = () => {
 
       // Load profile image
       if (decoded.firstName || decoded.sub) {
-        loadProfileImage(token);
+        loadProfileImage(token, decoded);
       }
 
       const role =
@@ -86,9 +81,14 @@ const AppNavbar = () => {
     };
   }, []);
 
-  const loadProfileImage = async (token) => {
+  const loadProfileImage = async (token, decoded) => {
     try {
-      const response = await axios.get("http://localhost:8081/users/profile/image", {
+      const role = decoded?.role || decoded?.roles?.[0] || decoded?.authorities?.[0]?.authority || null;
+      const endpoint = role === "ADMIN" 
+        ? "http://localhost:8081/admins/profile/image"
+        : "http://localhost:8081/users/profile/image";
+        
+      const response = await axios.get(endpoint, {
         headers: { Authorization: `Bearer ${token}` },
         responseType: "blob",
       });
@@ -161,7 +161,13 @@ const AppNavbar = () => {
     navigate(role === "ADMIN" ? "/admins/login" : "/login");
   };
 
-  const handleProfile = () => navigate("/profile");
+  const handleProfileClick = () => {
+    if (userRole === "ADMIN") {
+      navigate("/admins/profile");
+    } else {
+      navigate("/account");
+    }
+  };
 
   return (
     <Navbar
@@ -170,29 +176,17 @@ const AppNavbar = () => {
       className={`navbar-military ${isScrolled ? "navbar-scrolled" : ""}`}
     >
       <Container>
-      <Navbar.Brand
-  onClick={() => navigate("/")}
-  className="navbar-brand-custom"
-  style={{ cursor: "pointer" }}
->
-  <div className="navbar-logo-container" style={{ width: "40px", height: "40px" }}>
-    <img
-      src="/v.png"  // direct path from public folder
-      alt="My Profile"
-      style={{
-        width: "100%",
-        height: "100%",
-        borderRadius: "50%",
-        objectFit: "cover",
-      }}
-    />
-    <div className="navbar-logo-glow"></div>
-  </div>
-  <span className="navbar-brand-text">CaroCart</span>
-</Navbar.Brand>
-
-
-
+        <Navbar.Brand
+          onClick={() => navigate("/")}
+          className="navbar-brand-custom"
+          style={{ cursor: "pointer" }}
+        >
+          <div className="navbar-logo-container">
+            <span className="navbar-logo">🛒</span>
+            <div className="navbar-logo-glow"></div>
+          </div>
+          <span className="navbar-brand-text">CaroCart</span>
+        </Navbar.Brand>
 
         <Navbar.Toggle
           aria-controls="carocart-navbar-nav"
@@ -237,76 +231,40 @@ const AppNavbar = () => {
                 <div className="btn-shine"></div>
               </Button>
             ) : (
-              <NavDropdown
-                title={
-                  <div className="user-dropdown-title">
-                    <div className="user-avatar">
-                      {profileImageUrl ? (
-                        <img
-                          src={profileImageUrl}
-                          alt="Profile"
-                          className="user-avatar-image"
-                          onError={() => setProfileImageUrl(null)}
-                        />
-                      ) : (
-                        userName.charAt(0).toUpperCase()
-                      )}
-                    </div>
-                    <span className="user-name">{userName}</span>
-                  </div>
-                }
-                id="user-nav-dropdown"
-                className="nav-dropdown-custom"
-                align="end"
-              >
-                {userRole === "USER" && (
-                  <>
-                    <NavDropdown.Item
-                      as={Link}
-                      to="/user/cart"
-                      className="dropdown-item-custom"
-                    >
-                      <div className="dropdown-icon">
-                        <FaShoppingCart />
-                      </div>
-                      <span>My Cart</span>
-                    </NavDropdown.Item>
+              <div className="user-profile-section d-flex align-items-center gap-2">
+  <div
+    className="user-profile-clickable"
+    onClick={handleProfileClick}
+    style={{ cursor: "pointer" }}
+  >
+    <div className="user-avatar">
+      {profileImageUrl ? (
+        <img
+          src={profileImageUrl}
+          alt="Profile"
+          className="user-avatar-image"
+          onError={() => setProfileImageUrl(null)}
+        />
+      ) : (
+        userName.charAt(0).toUpperCase()
+      )}
+    </div>
+    <span className="user-name">{userName}</span>
+  </div>
 
-                    <NavDropdown.Item
-                      as={Link}
-                      to="/orders/my"
-                      className="dropdown-item-custom"
-                    >
-                      <div className="dropdown-icon">
-                        <FaClipboardList />
-                      </div>
-                      <span>My Orders</span>
-                    </NavDropdown.Item>
-                  </>
-                )}
+  {userRole === "ADMIN" && (
+    <Button
+      variant="outline-light"
+      onClick={handleLogout}
+      className="logout-btn"
+      size="sm"
+      title="Logout"
+    >
+      <FaSignOutAlt />
+    </Button>
+  )}
+</div>
 
-                <NavDropdown.Item
-                  onClick={handleProfile}
-                  className="dropdown-item-custom"
-                >
-                  <div className="dropdown-icon">
-                    <FaUser />
-                  </div>
-                  <span>Profile</span>
-                </NavDropdown.Item>
-
-                <NavDropdown.Divider className="dropdown-divider-custom" />
-
-                <NavDropdown.Item
-                  onClick={handleLogout}
-                  className="dropdown-item-custom logout-item"
-                >
-                  <div className="dropdown-icon">
-                    <FaSignOutAlt />
-                  </div>
-                  <span>Logout</span>
-                </NavDropdown.Item>
-              </NavDropdown>
             )}
           </Nav>
         </Navbar.Collapse>
