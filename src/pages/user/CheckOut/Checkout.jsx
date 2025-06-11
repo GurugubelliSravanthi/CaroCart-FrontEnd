@@ -18,8 +18,7 @@ const Checkout = () => {
 
   const navigate = useNavigate();
 
-  // Change this to your backend/public URL where images are stored
-  const imageBaseURL = "https://your-backend-url.com"; // Replace with your real base URL
+  const imageBaseURL = "http://localhost:8082/products/image/";
 
   useEffect(() => {
     const fetchCart = async () => {
@@ -152,11 +151,14 @@ const Checkout = () => {
             <div key={item.productId} className="cart-item">
               <img
                 src={
-                  item.image
-                    ? imageBaseURL + item.image // Add your base URL prefix here
+                  item.productId
+                    ? `${imageBaseURL}${item.productId}`
                     : "https://via.placeholder.com/60"
                 }
-                alt={item.productName}
+                alt={item.productName || "Product"}
+                onError={(e) => {
+                  e.target.src = "https://via.placeholder.com/60";
+                }}
               />
               <div className="cart-details">
                 <div>{item.productName}</div>
