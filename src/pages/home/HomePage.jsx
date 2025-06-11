@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import cartService from "../../services/cartService";
+import { FaSearch } from "react-icons/fa";
 import "./HomePage.css";
 
 const API_BASE = "http://localhost:8082/products";
@@ -11,6 +12,7 @@ const ProductList = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(""); // ✅ for user feedback
+  const [searchTerm, setSearchTerm] = useState(""); // For search input
 
   useEffect(() => {
     fetchProducts();
@@ -55,7 +57,16 @@ const ProductList = () => {
     }
   };
 
-  const groupedByCategory = products.reduce((acc, product) => {
+  // Filter products based on search term (case-insensitive, checks name and description)
+  const filteredProducts = products.filter((p) => {
+    const term = searchTerm.toLowerCase();
+    return (
+      p.name.toLowerCase().includes(term) ||
+      (p.description && p.description.toLowerCase().includes(term))
+    );
+  });
+
+  const groupedByCategory = filteredProducts.reduce((acc, product) => {
     const category = product.subCategory?.category || {
       id: "uncat",
       name: "Uncategorized",
@@ -105,10 +116,51 @@ const ProductList = () => {
 
   return (
     <div className="product-list-container">
-      <h2>Our Products</h2>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginBottom: "20px",
+        }}
+      >
+        <h2 style={{ margin: 0 }}>Our Products</h2>
+
+        <div
+          style={{
+            position: "relative",
+            width: "300px",
+          }}
+        >
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{
+              padding: "8px 40px 8px 12px",
+              width: "100%",
+              fontSize: "16px",
+              borderRadius: "4px",
+              border: "1px solid #ccc",
+            }}
+          />
+          <FaSearch
+            style={{
+              position: "absolute",
+              right: "12px",
+              top: "50%",
+              transform: "translateY(-50%)",
+              color: "#888",
+              pointerEvents: "none",
+            }}
+          />
+        </div>
+      </div>
+
       {message && <div className="feedback-message">{message}</div>}
 
-      {products.length === 0 ? (
+      {filteredProducts.length === 0 ? (
         <p className="no-products">No products available</p>
       ) : (
         Object.values(groupedByCategory).map((category) => (
