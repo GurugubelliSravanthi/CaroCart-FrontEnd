@@ -1,0 +1,101 @@
+/* src/pages/user/account/Account.css */
+
+.account-card {
+  height: 100%;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: none;
+}
+
+.account-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.account-card .card-body {
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.account-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #4a4a4a;
+}
+
+.account-card .card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0;
+  color: #333;
+}
+
+/* Specific colors for each card */
+.account-card:nth-child(1):hover {
+  background-color: rgba(75, 192, 192, 0.1);
+}
+
+.account-card:nth-child(2):hover {
+  background-color: rgba(54, 162, 235, 0.1);
+}
+
+.account-card:nth-child(3):hover {
+  background-color: rgba(255, 206, 86, 0.1);
+}
+
+.account-card:nth-child(4):hover {
+  background-color: rgba(255, 99, 132, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .account-card .card-body {
+    padding: 1.5rem 0.5rem;
+  }
+  
+  .account-icon {
+    font-size: 2rem;
+  }
+  
+  .account-card .card-title {
+    font-size: 1rem;
+  }
+}
+
+/* Animation for the cards */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.col {
+  animation: fadeInUp 0.5s ease forwards;
+  opacity: 0;
+}
+
+.col:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.col:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.col:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.col:nth-child(4) {
+  animation-delay: 0.4s;
+}
