@@ -37,6 +37,7 @@ import MyOrders from "./pages/user/MyOrders/MyOrders";
 import Account from "./pages/user/Account/Account";
 import AdminProfile from "./pages/admin/Profile/AdminProfile";
 
+import PaymentPage from "./pages/user/Payment/PaymentPage";
 
 function App() {
   return (
@@ -59,7 +60,7 @@ function App() {
         <Route path="/login" element={<UserLogin />} />
         <Route path="/user/cart" element={<UserCart />} />
         <Route path="/checkout" element={<Checkout />} />
-
+        <Route path="checkout/payment" element={<PaymentPage />} />
         {/* User routes */}
         <Route
           path="/dashboard"
