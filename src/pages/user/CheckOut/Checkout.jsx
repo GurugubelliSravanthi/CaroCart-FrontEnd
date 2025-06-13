@@ -1,53 +1,99 @@
 import React, { useState, useEffect } from "react";
 import cartService from "../../../services/cartService";
+import addressService from "../../../services/addressService";
 import { useNavigate } from "react-router-dom";
 import "./Checkout.css";
 
 const Checkout = () => {
   const [cartItems, setCartItems] = useState([]);
   const [useDefaultAddress, setUseDefaultAddress] = useState(true);
-  const [address, setAddress] = useState({
-    firstName: "",
-    lastName: "",
-    address1: "",
-    address2: "",
-    zip: "",
+  const [defaultAddress, setDefaultAddress] = useState(null);
+  const [newAddress, setNewAddress] = useState({
+    fullName: "",
+    phoneNumber: "",
+    alternatePhone: "",
+    pincode: "",
+    houseNumber: "",
+    street: "",
+    landmark: "",
     city: "",
     state: "",
+    country: "India",
+    addressType: "Home",
+    isDefault: false,
   });
 
   const navigate = useNavigate();
-
-  // Change this to your backend/public URL where images are stored
-  const imageBaseURL = "https://your-backend-url.com"; // Replace with your real base URL
+  const imageBaseURL = "http://localhost:8082/products/image/";
 
   useEffect(() => {
-    const fetchCart = async () => {
-      const items = await cartService.getCartItems();
-      if (items.length === 0) {
-        alert("Cart is empty.");
-        navigate("/");
-        return;
-      }
-      setCartItems(items);
-    };
-    fetchCart();
-  }, [navigate]);
+    const fetchData = async () => {
+      try {
+        const items = await cartService.getCartItems();
+        console.log("Fetched cart items:", items);
+        if (items.length === 0) {
+          alert("Cart is empty.");
+          navigate("/");
+          return;
+        }
+        setCartItems(items);
 
-  const handleChange = (e) => {
-    setAddress({ ...address, [e.target.name]: e.target.value });
+        const addresses = await addressService.getMyAddresses();
+        console.log("Fetched addresses:", addresses);
+
+        if (addresses && addresses.length > 0) {
+          const def = addresses.find((a) => a.isDefault) || addresses[0];
+          setDefaultAddress(def);
+        } else {
+          console.warn("No addresses found.");
+          setUseDefaultAddress(false);
+        }
+      } catch (error) {
+        console.error("❌ Error in fetchData:", error);
+        alert("Error loading checkout. Please try again.");
+      }
+    };
+    fetchData();
+  }, [navigate]);
+  
+
+  const handleNewAddressChange = (e) => {
+    setNewAddress({ ...newAddress, [e.target.name]: e.target.value });
   };
 
-  const handleContinue = () => {
-    // Add validation if needed
-    navigate("/checkout/payment");
+  const handleContinue = async () => {
+    try {
+      if (!useDefaultAddress) {
+        // Validate basic required fields
+        if (
+          !newAddress.fullName ||
+          !newAddress.phoneNumber ||
+          !newAddress.pincode ||
+          !newAddress.houseNumber ||
+          !newAddress.city ||
+          !newAddress.state
+        ) {
+          alert("Please fill in all required address fields.");
+          return;
+        }
+
+        // Create new address
+        const saved = await addressService.createAddress(newAddress);
+        console.log("New address saved:", saved);
+      }
+
+      navigate("/checkout/payment");
+    } catch (err) {
+      console.error("Error saving address:", err);
+      alert("Failed to save address.");
+    }
   };
 
   return (
     <div className="checkout-wrapper">
       <div className="checkout-left">
         <h2>Checkout</h2>
-        <div className="step-title">1. Shipping address</div>
+        <div className="step-title">1. Shipping Address</div>
 
         <div className="address-options">
           <label>
@@ -55,6 +101,7 @@ const Checkout = () => {
               type="radio"
               checked={useDefaultAddress}
               onChange={() => setUseDefaultAddress(true)}
+              disabled={!defaultAddress}
             />
             Use default address
           </label>
@@ -68,59 +115,102 @@ const Checkout = () => {
           </label>
         </div>
 
-        {!useDefaultAddress && (
+        {useDefaultAddress && defaultAddress ? (
+          <div className="default-address">
+            <strong>{defaultAddress.fullName}</strong> <br />
+            {defaultAddress.fullAddress} <br />
+            📞 {defaultAddress.phoneNumber}
+          </div>
+        ) : (
           <div className="address-form">
-            <div className="row">
-              <input
-                name="firstName"
-                placeholder="First Name"
-                value={address.firstName}
-                onChange={handleChange}
-              />
-              <input
-                name="lastName"
-                placeholder="Last Name"
-                value={address.lastName}
-                onChange={handleChange}
-              />
-            </div>
             <input
-              name="address1"
-              placeholder="Address Line 1"
-              value={address.address1}
-              onChange={handleChange}
+              name="fullName"
+              placeholder="Full Name"
+              value={newAddress.fullName}
+              onChange={handleNewAddressChange}
             />
             <input
-              name="address2"
-              placeholder="Address Line 2 (optional)"
-              value={address.address2}
-              onChange={handleChange}
+              name="phoneNumber"
+              placeholder="Phone Number"
+              value={newAddress.phoneNumber}
+              onChange={handleNewAddressChange}
             />
-            <div className="row">
+            <input
+              name="alternatePhone"
+              placeholder="Alternate Phone"
+              value={newAddress.alternatePhone}
+              onChange={handleNewAddressChange}
+            />
+            <input
+              name="pincode"
+              placeholder="Pincode"
+              value={newAddress.pincode}
+              onChange={handleNewAddressChange}
+            />
+            <input
+              name="houseNumber"
+              placeholder="House Number"
+              value={newAddress.houseNumber}
+              onChange={handleNewAddressChange}
+            />
+            <input
+              name="street"
+              placeholder="Street"
+              value={newAddress.street}
+              onChange={handleNewAddressChange}
+            />
+            <input
+              name="landmark"
+              placeholder="Landmark"
+              value={newAddress.landmark}
+              onChange={handleNewAddressChange}
+            />
+            <input
+              name="city"
+              placeholder="City"
+              value={newAddress.city}
+              onChange={handleNewAddressChange}
+            />
+            <input
+              name="state"
+              placeholder="State"
+              value={newAddress.state}
+              onChange={handleNewAddressChange}
+            />
+            <input
+              name="country"
+              placeholder="Country"
+              value={newAddress.country}
+              onChange={handleNewAddressChange}
+            />
+            <select
+              name="addressType"
+              value={newAddress.addressType}
+              onChange={handleNewAddressChange}
+            >
+              <option value="Home">Home</option>
+              <option value="Work">Work</option>
+              <option value="Other">Other</option>
+            </select>
+            <label>
               <input
-                name="zip"
-                placeholder="ZIP Code"
-                value={address.zip}
-                onChange={handleChange}
+                type="checkbox"
+                name="isDefault"
+                checked={newAddress.isDefault}
+                onChange={(e) =>
+                  setNewAddress({
+                    ...newAddress,
+                    isDefault: e.target.checked,
+                  })
+                }
               />
-              <input
-                name="city"
-                placeholder="City"
-                value={address.city}
-                onChange={handleChange}
-              />
-              <input
-                name="state"
-                placeholder="State"
-                value={address.state}
-                onChange={handleChange}
-              />
-            </div>
+              Set as default
+            </label>
           </div>
         )}
 
         <button className="continue-btn" onClick={handleContinue}>
-          Continue to payment
+          Continue to Payment
         </button>
       </div>
 
@@ -146,27 +236,23 @@ const Checkout = () => {
         </div>
 
         <h4>🛒 Cart ({cartItems.length} items)</h4>
-        {cartItems.map((item) => {
-          console.log("Image URL:", item.image);
-          return (
-            <div key={item.productId} className="cart-item">
-              <img
-                src={
-                  item.image
-                    ? imageBaseURL + item.image // Add your base URL prefix here
-                    : "https://via.placeholder.com/60"
-                }
-                alt={item.productName}
-              />
-              <div className="cart-details">
-                <div>{item.productName}</div>
-                <div>
-                  ₹{item.price.toFixed(2)} x {item.quantity}
-                </div>
+        {cartItems.map((item) => (
+          <div key={item.productId} className="cart-item">
+            <img
+              src={`${imageBaseURL}${item.productId}`}
+              alt={item.productName}
+              onError={(e) => {
+                e.target.src = "https://via.placeholder.com/60";
+              }}
+            />
+            <div className="cart-details">
+              <div>{item.productName}</div>
+              <div>
+                ₹{item.price.toFixed(2)} x {item.quantity}
               </div>
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
     </div>
   );

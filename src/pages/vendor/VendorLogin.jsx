@@ -65,12 +65,12 @@ const VendorLogin = () => {
       }
 
       window.dispatchEvent(new Event("carocart-login"));
-      alert("Login successful!");
+      // ✅ Removed alert
       navigate("/vendors/dashboard");
     } catch (error) {
       setMessage("An error occurred: " + error.message);
     }
-  };
+  };  
 
   return (
     <div style={{ maxWidth: 400, margin: "auto", paddingTop: 40 }}>
